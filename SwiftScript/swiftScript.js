@@ -40,13 +40,5 @@
   module.exports = SwiftScript;
 })();
 
-//add strings
-//what about functions types
-//add better constant checking. when exactly error should be thrown?
-//ensure that arrays are working + fix parsing types Array<Int>
-//add typles
-//spent some time to get inheritance right and rewrite it in project
-//check if globalScope ingeritence coudn't use just prototype = new Scope
-//should use normalized children list (think about it)
 // i think it shouldn't validate types but just find them
 //maybe rewritter should rewrite ast and translator should translate it?

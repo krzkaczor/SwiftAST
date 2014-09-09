@@ -27,7 +27,7 @@
 [0-9]+                return o ('NUMBER');
 
 
-"->"                   return o ('ARROW');
+"->"                  return o ('ARROW');
 "."                   return o ('DOT');
 ","                   return o ('COMMA');
 ":"                   return o ('COL');
