@@ -10,8 +10,8 @@
     return util.inspect(this.symbols, {depth: 2});
   };
 
-  Scope.prototype.defineFunction = function(name, paramsType, returnType) {
-    this.symbols[name] = new typeSystem.types.FunctionType(paramsType, returnType);
+  Scope.prototype.define = function(name, type) {
+    this.symbols[name] = type;
   };
 
   Scope.prototype.defineConstant = function(name, type) {

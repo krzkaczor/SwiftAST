@@ -27,7 +27,7 @@
   nodes.ReturnStatement.prototype.fillType = function(scope) {
     this.scope = scope;
     if (this.expression)
-      this.type = this.expression.fillType().type;
+      this.type = this.expression.fillType(scope).type;
   };
 
   nodes.ConstantDeclaration.prototype.fillType = function (scope) {
@@ -50,6 +50,15 @@
     return this;
   };
 
+  nodes.ParenthesizedExpression.prototype.fillType = function(scope) {
+    this.expressionsTypes = this.expressions.map(function(expr) {
+      return expr.fillType(scope).type.ensureNotLiteral();
+    });
+
+    this.type = new typeSystem.types.TupleType(this.expressionsTypes);
+    return this;
+  };
+
   nodes.FunctionDeclaration.prototype.fillType = function(parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
@@ -60,7 +69,7 @@
     this.block.fillType(this.scope);
     this.paramsTypes = this.parameters.map(function(param) { return param.type});
     this.returnType = this.scope.resolve(this.returnTypeDeclaredBare.value);
-    parentScope.defineFunction(this.name, this.paramsTypes, this.returnType);
+    parentScope.define(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
   };
 
   nodes.Parameter.prototype.fillType = function(scope) {

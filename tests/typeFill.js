@@ -34,7 +34,7 @@ describe("TypeFill", function() {
   });
 
   it('should fill mixed types correctly', function() {
-    var input = "let someVar = 1 + 1.0";
+    var input = "let someVar = 1 + 1.0;";
     var ast = swiftScript.astWithTypes(input);
     assert.equal(ast.statements[0].type.name, "Double");
   })

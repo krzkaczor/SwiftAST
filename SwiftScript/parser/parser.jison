@@ -10,10 +10,11 @@
 
 top-level-block
     : statements EOF { $$ = new TopLevelBlock($1); return $$ }
+    | EOF            { $$ = new TopLevelBlock([]); return $$ }
     ;
 
 block
-    : LCBRAC NL statements RCBRAC NL { $$ = new Block($3); }
+    : LCBRAC NL statements RCBRAC { $$ = new Block($3); }
     ;
 
 statements
@@ -29,8 +30,8 @@ statement
     ;
 
 return
-    : RETURN           { $$ = new ReturnStatement(); }
-    | RETURN expr      { $$ = new ReturnStatement($2); }
+    : RETURN expression      { $$ = new ReturnStatement($2); }
+    | RETURN                 { $$ = new ReturnStatement(); }
     ;
 
 for-in-stat
@@ -68,7 +69,6 @@ type-adnotation
 stat-end
     : NL
     | SEM
-    |
     ;
 
 id
@@ -82,6 +82,11 @@ expression
     | expression-binary-operator
     | array
     | function-call
+    | parenthesized-expression
+    ;
+
+parenthesized-expression
+    : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) }
     ;
 
 expression-binary-operator
@@ -93,16 +98,10 @@ expression-binary-operator
     ;
 
 function-call
-    : id LBRAC RBRAC                      { $$ = new FunctionCall($1, []) }}
-    | id LBRAC comma-separated-expression RBRAC { $$ = new FunctionCall($1, $3) }}
+    : id parenthesized-expression { $$ = new FunctionCall($1, $2) }
     ;
 
 comma-separated-expression
     : expression                       { $$ = [$1] }
-    | comma-separated-expression COMMA
-    | comma-separated-expression expression  { $$ = $1; $$.push($2) }
-    ;
-
-array
-    : LSBRAC comma-separated-expression RSBRAC     { $$ = new Arrayexpressionession($2); }
+    | comma-separated-expression COMMA expression { $$ = $1; $$.push($3) }
     ;

@@ -1,0 +1,1 @@
+let intAndDouble = (10, 10.5);

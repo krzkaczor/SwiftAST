@@ -9,7 +9,7 @@ describe("Operators", function() {
 
   //CHECK IT
   it('should associate correctly', function() {
-    var input = "let a = 1 + 2 + 3";
+    var input = "let a = 1 + 2 + 3;";
     var ast = swiftScript.astWithTypes(input);
     assert.equal(ast.statements[0].type.name, "Int");
     assert.equal(ast.statements[0].expression.left.left.value, 1);

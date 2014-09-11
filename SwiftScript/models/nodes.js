@@ -34,6 +34,11 @@
     this.expression = expression;
   };
 
+  nodes.ParenthesizedExpression = function(expressions) {
+    this.CLASS = "ParenthesizedExpression";
+    this.expressions = expressions;
+  };
+
   nodes.ConstantDeclaration = function (name, expression, type) {
     this.CLASS = "ConstantDeclaration";
     this.name = name.value;
@@ -82,10 +87,10 @@
     this.block = block;
   };
 
-  nodes.FunctionCall = function (callee, args) {
+  nodes.FunctionCall = function (callee, parenthesizedExpressions) {
     this.CLASS = "FunctionCall";
     this.callee = callee.value;
-    this.args = args;
+    this.args = parenthesizedExpressions.expressions;
   };
 
   nodes.MemberAccess = function (left, right) {

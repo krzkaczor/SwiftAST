@@ -1,5 +1,1 @@
-func sayHello(number: Int) -> Int {
-    return number
-}
-
-sayHello(5) + 5
+let http404Error = (404, 300)

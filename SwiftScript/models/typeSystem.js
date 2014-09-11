@@ -28,7 +28,11 @@
     this.returnType = returnType;
   };
 
-  types.NamedTypeSymbol.prototype.ensureNotLiteral = function() {
+  types.TupleType = function(expressionsTypes) {
+    this.expressionsTypes = expressionsTypes;
+  };
+
+  types.TupleType.prototype.ensureNotLiteral = types.NamedTypeSymbol.prototype.ensureNotLiteral = function() {
     return this;
   };
 
@@ -65,11 +69,6 @@
   };
 
   var Integer = new types.NamedTypeSymbol("Int");
-
-  var FunctionType = function(parameters, returnType) {
-    this.paramsTypes = params;
-    this.returnType = returnType;
-  };
 
   var builtInTypes = {
     "Int": Integer,
