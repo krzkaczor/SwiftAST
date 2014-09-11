@@ -46,7 +46,7 @@
     if (this.type != expressionType)
     this.type = type.makeConcrete ? type.makeConcrete() : type;
 
-    this.scope.defineConstant(this.name.value, this.type);
+    this.scope.defineConstant(this.name, this.type);
     return this;
   };
 
@@ -54,18 +54,19 @@
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
     this.parameters.forEach(function(parameter) {
-      self.scope.defineConstant(parameter.name.value, parameter.fillType(self.scope).type);
+      self.scope.defineConstant(parameter.name, parameter.fillType(self.scope).type);
     });
 
     this.block.fillType(this.scope);
+    this.paramsTypes = this.parameters.map(function(param) { return param.type});
     this.returnType = this.scope.resolve(this.returnTypeDeclaredBare.value);
-    parentScope.define(this.name, this);
+    parentScope.defineFunction(this.name, this.paramsTypes, this.returnType);
   };
 
   nodes.Parameter.prototype.fillType = function(scope) {
     this.scope = scope;
     this.type = this.scope.resolve(this.typeDeclaredBare.value);
-    this.scope.define(this.name, this.type);
+    this.scope.defineConstant(this.name, this.type);
     return this;
   };
 
@@ -107,8 +108,28 @@
 
   nodes.FunctionCall.prototype.fillType = function (scope) {
     this.scope = scope;
-    this.type = this.scope.resolve(this.name);
+    this.functionType = this.scope.resolve(this.callee);
+    this.type = this.functionType.returnType;
+    this.args.forEach(function(arg) {
+      arg.fillType(scope);
+    });
+
+    this.verifyTypes(scope);
+
     return this;
+  };
+
+  nodes.FunctionCall.prototype.verifyTypes = function(scope) {
+    if (this.args.length != this.functionType.paramsTypes.length)
+      throw new errors.TypeInconsistencyError([this.args, this.functionType.paramsTypes]);
+
+    for(var i = 0;i < this.args.length; i++) {
+      var argType = this.args[i].type,
+          paramType = this.functionType.paramsTypes[i];
+
+      if ( !argType.eq(paramType) && !argType.isSubtype(paramType))
+        throw new errors.TypeInconsistencyError([argType, paramType]);
+    }
   };
 
   //nodes.MemberAccess.prototype.fillType = function(scope) {

@@ -10,15 +10,15 @@
     return util.inspect(this.symbols, {depth: 2});
   };
 
-  Scope.prototype.define = function(name, type) {
-    this.symbols[name] = new typeSystem.types.VariableSymbol(name, type);
+  Scope.prototype.defineFunction = function(name, paramsType, returnType) {
+    this.symbols[name] = new typeSystem.types.FunctionType(paramsType, returnType);
   };
 
   Scope.prototype.defineConstant = function(name, type) {
     this.symbols[name] = new typeSystem.types.ConstantSymbol(name, type);
   };
 
-  Scope.prototype.resolve = function(name, type) {
+  Scope.prototype.resolve = function(name) {
     var searchedSymbol = this.symbols[name];
 
     if(searchedSymbol === undefined)

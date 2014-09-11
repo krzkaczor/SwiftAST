@@ -12,23 +12,27 @@
     this.type = type;
   };
 
-  types.TypeSymbol = function(name, parent) {
+  types.NamedTypeSymbol = function(name, parent) {
     this.CLASS = "NamedTypeSymbol";
     this.name = name;
     this.parent = parent;
   };
 
-  types.CompoundTypeSymbol = function(parent, child) {
-    this.CLASS = "CompoundTypeSymbol";
-    this.parent = parent;
-    this.child = child;
+  types.NamedTypeSymbol.prototype.eq = function(other) {
+    return this == other;
   };
 
-  types.TypeSymbol.prototype.ensureNotLiteral = function() {
+  types.FunctionType = function(paramsTypes, returnType) {
+    this.CLASS = "FunctionTypeSymbol";
+    this.paramsTypes = paramsTypes;
+    this.returnType = returnType;
+  };
+
+  types.NamedTypeSymbol.prototype.ensureNotLiteral = function() {
     return this;
   };
 
-  types.TypeSymbol.prototype.isSubtype = function (anotherType) {
+  types.NamedTypeSymbol.prototype.isSubtype = function (anotherType) {
     if (anotherType == this || anotherType == this.ensureNotLiteral())
       return true;
     if (this.parent)
@@ -36,7 +40,7 @@
     return false;
   };
 
-  types.TypeSymbol.prototype.findCommonType = function(anotherType) {
+  types.NamedTypeSymbol.prototype.findCommonType = function(anotherType) {
     var currentType = this;
     while(currentType !== undefined) {
       if (anotherType === currentType || anotherType.isSubtype(currentType))
@@ -46,33 +50,30 @@
     }
   };
 
-  var Double = new types.TypeSymbol("Double");
+  var Double = new types.NamedTypeSymbol("Double");
 
-  var DoubleLiteral = new types.TypeSymbol("DoubleLiteral", Double);
+  var DoubleLiteral = new types.NamedTypeSymbol("DoubleLiteral", Double);
 
   DoubleLiteral.ensureNotLiteral = function() {
     return builtInTypes.Double;
   };
 
-  var IntegerLiteral = new types.TypeSymbol("IntegerLiteral", DoubleLiteral);
+  var IntegerLiteral = new types.NamedTypeSymbol("IntegerLiteral", DoubleLiteral);
 
   IntegerLiteral.ensureNotLiteral = function() {
     return builtInTypes.Int;
   };
 
-  var Integer = new types.TypeSymbol("Int");
+  var Integer = new types.NamedTypeSymbol("Int");
 
-  var FunctionType = function(params, returnType) {
-    this.params = params;
+  var FunctionType = function(parameters, returnType) {
+    this.paramsTypes = params;
     this.returnType = returnType;
   };
-
-  FunctionType.prototype = new types.TypeSymbol("Function");
 
   var builtInTypes = {
     "Int": Integer,
     "Double": Double,
-    "Array": new types.TypeSymbol("Array"),
     "IntegerLiteral": IntegerLiteral,
     "DoubleLiteral": DoubleLiteral
   };

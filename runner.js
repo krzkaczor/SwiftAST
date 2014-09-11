@@ -10,9 +10,11 @@ var SwiftScript = require("./SwiftScript/swiftScript.js");
 var swiftScript = new SwiftScript();
 var ast = swiftScript.astWithTypes(input);
 
-console.log("AST:");
-ast.removeScopes();
-console.log(util.inspect(ast, { depth: null }));
+if (ast) {
+  console.log("AST:");
+  ast.removeScopes();
+  console.log(util.inspect(ast, { depth: null }));
+}
 
 //var util = require('util');
 //var fs = require("fs");

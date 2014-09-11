@@ -5,12 +5,12 @@ var types = require("../SwiftScript/models/typeSystem.js").types;
 describe("TypeSystem", function () {
   var javaLikeTypes;
   beforeEach(function () {
-    var object = new types.TypeSymbol("Object");
-    var string = new types.TypeSymbol("String", object);
-    var integer = new types.TypeSymbol("Integer", object);
-    var buffer = new types.TypeSymbol("Buffer", object);
-    var shortBuffer = new types.TypeSymbol("ShortBuffer", buffer);
-    var longBuffer = new types.TypeSymbol("LongBuffer", buffer);
+    var object = new types.NamedTypeSymbol("Object");
+    var string = new types.NamedTypeSymbol("String", object);
+    var integer = new types.NamedTypeSymbol("Integer", object);
+    var buffer = new types.NamedTypeSymbol("Buffer", object);
+    var shortBuffer = new types.NamedTypeSymbol("ShortBuffer", buffer);
+    var longBuffer = new types.NamedTypeSymbol("LongBuffer", buffer);
 
     javaLikeTypes = {
       object: object,
@@ -35,6 +35,6 @@ describe("TypeSystem", function () {
   });
 
   it('should not detect common type', function () {
-    assert.equal(javaLikeTypes.string.findCommonType(new types.TypeSymbol("MyType")), undefined);
+    assert.equal(javaLikeTypes.string.findCommonType(new types.NamedTypeSymbol("MyType")), undefined);
   });
 });

@@ -1,1 +1,5 @@
-let dupa = 1 + 2.0 * 3
+func sayHello(number: Int) -> Int {
+    return number
+}
+
+sayHello(5) + 5

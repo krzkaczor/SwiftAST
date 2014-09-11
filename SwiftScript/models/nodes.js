@@ -32,18 +32,18 @@
 
   nodes.ReturnStatement = function(expression) {
     this.expression = expression;
-  }
+  };
 
   nodes.ConstantDeclaration = function (name, expression, type) {
     this.CLASS = "ConstantDeclaration";
-    this.name = name;
+    this.name = name.value;
     this.typeDeclaredBare = type;
     this.expression = expression;
   };
 
   nodes.FunctionDeclaration = function(name, parameters, block, returnType) {
     this.CLASS = "FunctionDeclaration";
-    this.name = name;
+    this.name = name.value;
     this.parameters = parameters;
     this.block = block;
     this.returnTypeDeclaredBare = returnType;
@@ -51,7 +51,7 @@
 
   nodes.Parameter = function(name, type){
     this.CLASS = "Parameter";
-    this.name = name;
+    this.name = name.value;
     this.typeDeclaredBare = type;
   };
 
@@ -84,7 +84,7 @@
 
   nodes.FunctionCall = function (callee, args) {
     this.CLASS = "FunctionCall";
-    this.callee = callee;
+    this.callee = callee.value;
     this.args = args;
   };
 
