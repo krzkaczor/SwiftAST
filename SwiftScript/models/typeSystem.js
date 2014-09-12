@@ -23,12 +23,13 @@
   };
 
   types.FunctionType = function(paramsTypes, returnType) {
-    this.CLASS = "FunctionTypeSymbol";
+    this.CLASS = "FunctionType";
     this.paramsTypes = paramsTypes;
     this.returnType = returnType;
   };
 
   types.TupleType = function(expressionsTypes) {
+    this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes;
   };
 

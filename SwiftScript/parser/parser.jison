@@ -58,11 +58,29 @@ parameter
     ;
 
 let-declaration
-    : LET id ASSIGN expression  { $$ = new ConstantDeclaration($2, $4) }
-    | LET id COL type-adnotation ASSIGN expression { $$ = new ConstantDeclaration($2, $6, $4) }
+    : LET pattern ASSIGN expression  { $$ = new ConstantDeclaration($2, $4) }
     ;
 
-type-adnotation
+pattern
+    : id type-annotation    { $$ = new IdentifierPattern($1, $2); }
+    | id                    { $$ = new IdentifierPattern($1); }
+    | tuple-pattern
+    ;
+
+tuple-pattern
+    : LBRAC tuple-pattern-elements RBRAC        { $$ = $2 }
+    ;
+
+tuple-pattern-elements
+    : pattern                                   { $$ = new TuplePattern($1) }
+    | tuple-pattern-elements COMMA pattern      { $$ = $1; $$.add($3) }
+    ;
+
+type-annotation
+    : COL type              { $$ = $2 }
+    ;
+
+type
     : id
     ;
 

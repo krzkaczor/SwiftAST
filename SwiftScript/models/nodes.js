@@ -39,11 +39,18 @@
     this.expressions = expressions;
   };
 
-  nodes.ConstantDeclaration = function (name, expression, type) {
+  nodes.ConstantDeclaration = function (pattern, expression) {
     this.CLASS = "ConstantDeclaration";
-    this.name = name.value;
-    this.typeDeclaredBare = type;
+    this.pattern = pattern;
     this.expression = expression;
+  };
+
+  nodes.TuplePattern = function (pattern) {
+    this.patterns = [pattern];
+  };
+
+  nodes.TuplePattern.prototype.add = function(pattern) {
+    this.patterns.push(pattern);
   };
 
   nodes.FunctionDeclaration = function(name, parameters, block, returnType) {
@@ -63,6 +70,12 @@
   nodes.IntegerNumberLiteral = function (value) {
     this.CLASS = "NumberLiteral";
     this.value = parseInt(value);
+  };
+
+  nodes.IdentifierPattern = function(name, type) {
+    this.CLASS = "IdentifierPattern";
+    this.name = name.value;
+    this.typeBare = type;
   };
 
   nodes.DoubleNumberLiteral = function (value) {

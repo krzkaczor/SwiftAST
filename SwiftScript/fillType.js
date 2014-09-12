@@ -33,20 +33,35 @@
   nodes.ConstantDeclaration.prototype.fillType = function (scope) {
     this.scope = scope;
 
-    if (this.typeDeclaredBare)
-      var typeDeclared = this.scope.resolve(this.typeDeclaredBare.value);
     var expressionType = this.expression.fillType(scope).type.ensureNotLiteral();
-    if (!typeDeclared)
-      this.type = expressionType;
-    else if (typeDeclared !== expressionType) {
-        throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
-    } else {
-      this.type = expressionType;
-    }
-    if (this.type != expressionType)
-    this.type = type.makeConcrete ? type.makeConcrete() : type;
 
-    this.scope.defineConstant(this.name, this.type);
+    this.type = this.pattern.fillType(scope, expressionType).type;
+
+    return this;
+  };
+
+  nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType) {
+    if (this.typeBare) {
+      var typeDeclared = scope.resolve(this.typeBare.value);
+    }
+    if (this.typeBare && typeDeclared !== expressionType) {
+      throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
+    }
+
+    this.type = expressionType;
+    scope.defineConstant(this.name, this.type);
+
+    return this;
+  };
+
+  nodes.TuplePattern.prototype.fillType = function(scope, expressionType) {
+    if (expressionType.CLASS !== "TupleType" || this.patterns.length != expressionType.expressionsTypes.length)
+      throw new errors.TypeInconsistencyError([this.patterns, expressionType.expressionsTypes]);
+
+    for(var i = 0;i < this.patterns.length;i++) {
+      this.patterns[i].fillType(scope, expressionType.expressionsTypes[i]);
+    }
+
     return this;
   };
 

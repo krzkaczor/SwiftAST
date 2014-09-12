@@ -1,1 +1,2 @@
-let http404Error = (404, 300)
+let tuple1 = (1, 2.0)
+let ((a, b), c) = (tuple1, 3);

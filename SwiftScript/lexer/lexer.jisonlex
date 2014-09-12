@@ -27,6 +27,7 @@
 [0-9]+                return o ('NUMBER');
 
 
+"_"                   return o ('USCORE');
 "->"                  return o ('ARROW');
 "."                   return o ('DOT');
 ","                   return o ('COMMA');
