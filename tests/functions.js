@@ -32,4 +32,14 @@ describe("Functions", function() {
     assert.throws( function() { return swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
   });
 
+  it('should allow function as first class citizens', function() {
+    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+
+    var scope = ast.scope;
+    var applyZero = scope.resolve("applyZero");
+    assert.equal(applyZero.type.returnType.name, "Int");
+    assert.equal(applyZero.type.paramsTypes[0].CLASS, "FunctionType");
+  });
+
 });

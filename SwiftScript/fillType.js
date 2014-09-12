@@ -42,7 +42,7 @@
 
   nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType) {
     if (this.typeBare) {
-      var typeDeclared = scope.resolve(this.typeBare.value);
+      var typeDeclared = this.typeBare.fillType(scope).type;
     }
     if (this.typeBare && typeDeclared !== expressionType) {
       throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
@@ -84,12 +84,12 @@
     this.block.fillType(this.scope);
     this.paramsTypes = this.parameters.map(function(param) { return param.type});
     this.returnType = this.scope.resolve(this.returnTypeDeclaredBare.value);
-    parentScope.define(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
+    parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
   };
 
   nodes.Parameter.prototype.fillType = function(scope) {
     this.scope = scope;
-    this.type = this.scope.resolve(this.typeDeclaredBare.value);
+    this.type = this.typeDeclared.fillType(scope).type;
     this.scope.defineConstant(this.name, this.type);
     return this;
   };
@@ -97,6 +97,17 @@
   nodes.IntegerNumberLiteral.prototype.fillType = function (scope) {
     this.scope = scope;
     this.type = scope.resolve("IntegerLiteral"); //could be done while creation of object
+    return this;
+  };
+
+  nodes.NamedTypeNode.prototype.fillType = function(scope) {
+    this.type = scope.resolve(this.name);
+    return this;
+  };
+
+  nodes.FunctionTypeNode.prototype.fillType = function(scope) {
+    this.type = new typeSystem.types.FunctionType([this.paramType[0].fillType(scope).type], this.returnType.fillType(scope).type);
+
     return this;
   };
 
@@ -109,7 +120,8 @@
   nodes.Id.prototype.fillType = function (scope) {
     this.scope = scope;
     this.type = scope.resolve(this.value).type;
-    return this
+
+    return this;
   };
 
   nodes.ArrayExpression.prototype.fillType = function (scope) {
@@ -132,7 +144,7 @@
 
   nodes.FunctionCall.prototype.fillType = function (scope) {
     this.scope = scope;
-    this.functionType = this.scope.resolve(this.callee);
+    this.functionType = this.scope.resolve(this.callee).type;
     this.type = this.functionType.returnType;
     this.args.forEach(function(arg) {
       arg.fillType(scope);

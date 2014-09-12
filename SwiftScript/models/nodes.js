@@ -64,11 +64,20 @@
   nodes.Parameter = function(name, type){
     this.CLASS = "Parameter";
     this.name = name.value;
-    this.typeDeclaredBare = type;
+    this.typeDeclared = type;
   };
 
+  nodes.NamedTypeNode = function(name) {
+    this.name = name.value;
+  };
+
+  nodes.FunctionTypeNode = function(paramType, returnType) {
+    this.paramType = paramType;
+    this.returnType = returnType;
+  }
+
   nodes.IntegerNumberLiteral = function (value) {
-    this.CLASS = "NumberLiteral";
+    this.CLASS = "IntegerLiteral";
     this.value = parseInt(value);
   };
 
@@ -79,7 +88,7 @@
   };
 
   nodes.DoubleNumberLiteral = function (value) {
-    this.CLASS = "DoubleNumberLiteral";
+    this.CLASS = "DoubleLiteral";
     this.value = parseFloat(value);
   };
 

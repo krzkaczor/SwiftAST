@@ -10,7 +10,8 @@
 
     //alter rules to match actual data structure
     lexer = lexer.replace(/return[ ]?o[ ]?\(/g, "return yy.lexerHelper.call(this,");
-    parser = parser.replace(/new[ ]?/g, "new yy.nodes.");
+    parser = parser.replace(/new[ ]+([.a-zA-Z])?/g, "new yy.nodes.$1");
+    //parser = parser.replace(/new[ ]+yy.nodes.([\.a-zA-Z]*)Type\(/g, "new yy.types.$1Type(");
 
     var grammar = lexer + parser;
     this.parser = new jison.Parser(grammar);

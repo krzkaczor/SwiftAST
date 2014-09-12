@@ -28,6 +28,17 @@
     this.returnType = returnType;
   };
 
+  types.FunctionType.prototype.eq = function(other) {
+    if (this.CLASS != other.CLASS)
+      return false;
+
+    return this.paramsTypes[0] == other.paramsTypes[0] && this.returnType == other.returnType;
+  };
+
+  types.FunctionType.prototype.isSubtype = function(other) {
+    return false; //for now don't care about covariance
+  };
+
   types.TupleType = function(expressionsTypes) {
     this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes;

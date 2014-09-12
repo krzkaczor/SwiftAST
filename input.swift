@@ -1,2 +1,3 @@
-let tuple1 = (1, 2.0)
-let ((a, b), c) = (tuple1, 3);
+let intConst = 3;
+let intConst2:Int = 5;
+let intConst3 = intConst + intConst2;

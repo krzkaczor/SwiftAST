@@ -1,4 +1,5 @@
 /lex
+%right ASTERIX
 %left ASTERIX
 %left PLUS
 %left DOT
@@ -45,7 +46,7 @@ declaration
 
 function-declaration
     : FUNC id LBRAC parameters RBRAC ARROW id block  { $$ = new FunctionDeclaration($2, $4, $8, $7) }
-    | FUNC id LBRAC parameters RBRAC block              { $$ = new FunctionDeclaration($2, $4, $6) }
+    | FUNC id LBRAC parameters RBRAC block           { $$ = new FunctionDeclaration($2, $4, $6) }
     ;
 
 parameters
@@ -54,7 +55,7 @@ parameters
     ;
 
 parameter
-    : id COL id  { $$ = new Parameter($1, $3) }
+    : id type-annotation  { $$ = new Parameter($1, $2) }
     ;
 
 let-declaration
@@ -81,7 +82,8 @@ type-annotation
     ;
 
 type
-    : id
+    : id                        { $$ = new NamedTypeNode($1) }
+    | type ARROW type           { $$ = new FunctionTypeNode([$1], $3) }
     ;
 
 stat-end
