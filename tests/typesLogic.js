@@ -1,6 +1,6 @@
 var assert = require("assert");
 var errors = require("../SwiftScript/models/errors.js");
-var types = require("../SwiftScript/models/typeSystem.js").types;
+var types = require("../SwiftScript/typeSystem/typeSystem.js").types;
 
 describe("TypeSystem", function () {
   var javaLikeTypes;

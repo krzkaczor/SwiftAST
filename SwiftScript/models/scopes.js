@@ -1,5 +1,5 @@
 (function() {
-  var typeSystem = require('./typeSystem.js');
+  var symbols = require('../typeSystem/symbols.js');
   var errors = require('./errors.js');
   var util = require('util');
 
@@ -16,11 +16,11 @@
   };
 
   Scope.prototype.defineFunction = function(name, type) {
-    this.symbols[name] = new typeSystem.types.ConstantSymbol(name, type); //todo
+    this.symbols[name] = new symbols.ConstantSymbol(name, type); //todo
   };
 
   Scope.prototype.defineConstant = function(name, type) {
-    this.symbols[name] = new typeSystem.types.ConstantSymbol(name, type);
+    this.symbols[name] = new symbols.ConstantSymbol(name, type);
   };
 
   Scope.prototype.resolve = function(name) {
@@ -43,18 +43,18 @@
 
   scopes.LocalScope.prototype = new Scope();
 
-  scopes.RootScope = function() {
-    this.loadBuiltInTypes();
+  scopes.RootScope = function(builtInTypes) {
+    this.loadBuiltInTypes(builtInTypes);
   };
 
   scopes.RootScope.prototype = new Scope();
 
-  scopes.RootScope.prototype.loadBuiltInTypes = function() {
+  scopes.RootScope.prototype.loadBuiltInTypes = function(builtInTypes) {
     var self = this;
-    for(var typeName in typeSystem.builtInTypes) {
-      if (!typeSystem.builtInTypes.hasOwnProperty(typeName))
+    for(var typeName in builtInTypes) {
+      if (!builtInTypes.hasOwnProperty(typeName))
         continue;
-      self.symbols[typeName] = typeSystem.builtInTypes[typeName];
+      self.symbols[typeName] = builtInTypes[typeName];
     }
   };
 

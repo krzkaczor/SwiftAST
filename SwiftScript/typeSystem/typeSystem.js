@@ -1,40 +1,9 @@
 (function() {
+  var scopes = require("../models/scopes.js");
+
   var types = {};
 
-  types.VariableSymbol = function(name, type) {
-    this.name = name;
-    this.type = type;
-  };
-
-  types.ConstantSymbol = function(name, type) {
-    this.CLASS = "ConstantTypeSymbol";
-    this.name = name;
-    this.type = type;
-  };
-
-  types.NamedType = function(name, parent) {
-    this.CLASS = "NamedType";
-    this.name = name;
-    this.parent = parent;
-  };
-
-  types.NamedType.prototype.eq = function(other) {
-    if (other.canUnpack)
-      other = other.unpack();
-
-    return this.name == other.name;
-  };
-
-  types.NamedType.prototype.isSubtype = function (other) {
-    if (other.canUnpack)
-      other = other.unpack();
-
-    if (other == this || other == this.ensureNotLiteral())
-      return true;
-    if (this.parent)
-      return this.parent.isSubtype(other);
-    return false;
-  };
+  types.NamedType = require("./namedTypes.js");
 
   types.FunctionType = function(paramsTypes, returnType) {
     this.CLASS = "FunctionType";
@@ -59,9 +28,16 @@
   types.TupleType = function(expressionsTypes) {
     this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes;
-    this.canUnpack = this.expressionsTypes.length == 1;
+    this.canUnpack = expressionsTypes.length == 1;
     this.accessible = true;
-  };
+
+    this.scope = new scopes.RootScope();
+
+    var self = this;
+    expressionsTypes.forEach(function(type, i) {
+      self.scope.defineConstant(i, type);
+    });
+    };
 
   types.TupleType.prototype.unpack = function() {
     return this.expressionsTypes[0];
@@ -100,7 +76,15 @@
     return true;
   };
 
-  types.TupleType.prototype.ensureNotLiteral = types.NamedType.prototype.ensureNotLiteral = function() {
+  types.TupleType.prototype.ensureNotLiteral = function() {
+    var notLiteralTypes = this.expressionsTypes.map(function(type) {
+      return type.ensureNotLiteral();
+    });
+
+    return new types.TupleType(notLiteralTypes);
+  };
+
+  types.NamedType.prototype.ensureNotLiteral = function() {
     return this;
   };
 

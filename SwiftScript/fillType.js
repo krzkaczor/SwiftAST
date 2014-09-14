@@ -1,12 +1,12 @@
 (function () {
   var nodes = require("./models/nodes.js");
   var scopes = require("./models/scopes.js");
-  var typeSystem = require("./models/typeSystem.js");
+  var typeSystem = require("./typeSystem/typeSystem.js");
   var errors = require("./models/errors.js");
 
   nodes.TopLevelBlock.prototype.fillType = function () {
     var self = this;
-    this.scope = new scopes.RootScope();
+    this.scope = new scopes.RootScope(typeSystem.builtInTypes);
 
     this.statements.forEach(function (statement) {
       statement.fillType(self.scope);
@@ -35,7 +35,7 @@
   nodes.ConstantDeclaration.prototype.fillType = function (scope) {
     this.scope = scope;
 
-    var expressionType = this.expression.fillType(scope).type.ensureNotLiteral();
+    var expressionType = this.expression.fillType(scope).type;
 
     this.type = this.pattern.fillType(scope, expressionType).type;
 
@@ -45,14 +45,17 @@
   nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType) {
     if (this.typeBare) {
       var typeDeclared = this.typeBare.fillType(scope).type;
-    }
-    if (this.typeBare && !typeDeclared.eq(expressionType)) {
-      throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
-    }
 
-    this.type = expressionType;
-    scope.defineConstant(this.name, this.type);
+      if (!typeDeclared.eq(expressionType) && !expressionType.isSubtype(typeDeclared)) {
+        throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
+      }
 
+      this.type = typeDeclared.ensureNotLiteral();
+      scope.defineConstant(this.name, this.type);
+    } else {
+      this.type = expressionType.ensureNotLiteral();
+      scope.defineConstant(this.name, this.type);
+    }
     return this;
   };
 
@@ -69,7 +72,7 @@
 
   nodes.ParenthesizedExpression.prototype.fillType = function(scope) {
     this.expressionsTypes = this.expressions.map(function(expr) {
-      return expr.fillType(scope).type.ensureNotLiteral();
+      return expr.fillType(scope).type;
     });
 
     this.type = new typeSystem.types.TupleType(this.expressionsTypes);
@@ -157,15 +160,6 @@
     this.scope = new scopes.LocalScope(scope);
     this.scope.define(this.iteratorId.value, this.iteratorExpr.fillType(this.scope));
     this.block.fillType(this.scope);
-    return this;
-  };
-
-  nodes.ParenthesizedExpression.prototype.fillType = function(scope) {
-    var expressionsTypes = this.expressions.map(function(expr) {
-      return expr.fillType(scope).type.ensureNotLiteral();
-    });
-
-    this.type = new typeSystem.types.TupleType(expressionsTypes);
     return this;
   };
 

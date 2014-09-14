@@ -18,7 +18,7 @@
 
     var lexerHelper = require("./lexer/lexerHelper.js");
     var nodes = require("./models/nodes.js");
-    var types = require('./models/typeSystem.js').types;
+    var types = require('./typeSystem/typeSystem.js').types;
     require("./fillType.js");
 
     this.parser.yy = {

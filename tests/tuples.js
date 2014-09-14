@@ -2,7 +2,7 @@ var assert = require("assert");
 var fs = require("fs");
 var path = 'tests/fixtures/';
 var errors = require("../SwiftScript/models/errors.js");
-var typeSystem = require("../SwiftScript/models/typeSystem.js");
+var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
 var SwiftScript = require("../SwiftScript/swiftScript.js");
 
 describe("Tuples", function() {
@@ -74,7 +74,21 @@ describe("Tuples", function() {
     assert.ok(intAndInt.type.eq(typeSystem.builtInTypes.Double));
   });
 
-  it("should allow ", function() {
+  it("should be covariant", function() {
     var input = "let doubleTuple: (Double, Double) = (5, 5);";
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    var anotherType = new typeSystem.types.TupleType([typeSystem.builtInTypes.Double, typeSystem.builtInTypes.Double]);
+    assert.ok(globalScope.resolve("doubleTuple").type.eq(anotherType));
+  });
+
+  it("should allow access a member", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    assert.ok(globalScope.resolve("intConst").type.eq(typeSystem.builtInTypes.Int));
+    assert.ok(globalScope.resolve("doubleConst").type.eq(typeSystem.builtInTypes.Double));
   });
 });

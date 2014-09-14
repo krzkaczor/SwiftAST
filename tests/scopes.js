@@ -2,7 +2,7 @@ var assert = require("assert");
 var fs = require("fs");
 var path = 'tests/fixtures/';
 var errors = require("../SwiftScript/models/errors.js");
-var typeSystem = require("../SwiftScript/models/typeSystem.js");
+var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
 var SwiftScript = require("../SwiftScript/swiftScript.js");
 
 describe("Scopes", function() {
