@@ -31,6 +31,7 @@
   };
 
   nodes.ReturnStatement = function(expression) {
+    this.CLASS = "ReturnStatement";
     this.expression = expression;
   };
 
@@ -46,6 +47,7 @@
   };
 
   nodes.TuplePattern = function (pattern) {
+    this.CLASS = "TuplePattern";
     this.patterns = [pattern];
   };
 
@@ -68,13 +70,20 @@
   };
 
   nodes.NamedTypeNode = function(name) {
+    this.CLASS = "NamedTypeNode";
     this.name = name.value;
   };
 
   nodes.FunctionTypeNode = function(paramType, returnType) {
+    this.CLASS = "FunctionTypeNode";
     this.paramType = paramType;
     this.returnType = returnType;
-  }
+  };
+
+  nodes.TupleTypeNode = function(typesBare) {
+    this.CLASS = "TupleTypeNode";
+    this.typesBare = typesBare;
+  };
 
   nodes.IntegerNumberLiteral = function (value) {
     this.CLASS = "IntegerLiteral";
@@ -112,7 +121,7 @@
   nodes.FunctionCall = function (callee, parenthesizedExpressions) {
     this.CLASS = "FunctionCall";
     this.callee = callee.value;
-    this.args = parenthesizedExpressions.expressions;
+    this.args = parenthesizedExpressions;
   };
 
   nodes.MemberAccess = function (left, right) {

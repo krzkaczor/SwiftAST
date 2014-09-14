@@ -13,7 +13,16 @@ var SymbolNotFoundError = function(symbolName) {
 
 SymbolNotFoundError.prototype = new Error();
 
+var TypeNotAccessibleError = function(type) {
+  this.type = type;
+  this.name = "TypeNotAccessibleError";
+  this.message = "Type is not accessible: " + type.CLASS;
+};
+
+TypeNotAccessibleError.prototype = new Error();
+
 module.exports = {
-  TypeInconsistencyError:  TypeInconsistencyError,
-  SymbolNotFoundError:  SymbolNotFoundError
+  TypeInconsistencyError: TypeInconsistencyError,
+  SymbolNotFoundError: SymbolNotFoundError,
+  TypeNotAccessibleError: TypeNotAccessibleError
 };

@@ -12,51 +12,99 @@
     this.type = type;
   };
 
-  types.NamedTypeSymbol = function(name, parent) {
-    this.CLASS = "NamedTypeSymbol";
+  types.NamedType = function(name, parent) {
+    this.CLASS = "NamedType";
     this.name = name;
     this.parent = parent;
   };
 
-  types.NamedTypeSymbol.prototype.eq = function(other) {
-    return this == other;
+  types.NamedType.prototype.eq = function(other) {
+    if (other.canUnpack)
+      other = other.unpack();
+
+    return this.name == other.name;
+  };
+
+  types.NamedType.prototype.isSubtype = function (other) {
+    if (other.canUnpack)
+      other = other.unpack();
+
+    if (other == this || other == this.ensureNotLiteral())
+      return true;
+    if (this.parent)
+      return this.parent.isSubtype(other);
+    return false;
   };
 
   types.FunctionType = function(paramsTypes, returnType) {
     this.CLASS = "FunctionType";
-    this.paramsTypes = paramsTypes;
+    this.paramType = paramsTypes;
     this.returnType = returnType;
   };
 
   types.FunctionType.prototype.eq = function(other) {
+    if (other.canUnpack)
+      other = other.unpack();
+
     if (this.CLASS != other.CLASS)
       return false;
 
-    return this.paramsTypes[0] == other.paramsTypes[0] && this.returnType == other.returnType;
+    return this.paramType.eq(other.paramType) && this.returnType.eq(other.returnType);
   };
 
   types.FunctionType.prototype.isSubtype = function(other) {
-    return false; //for now don't care about covariance
+    return false; //for now don't care about function covariance
   };
 
   types.TupleType = function(expressionsTypes) {
     this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes;
+    this.canUnpack = this.expressionsTypes.length == 1;
+    this.accessible = true;
   };
 
-  types.TupleType.prototype.ensureNotLiteral = types.NamedTypeSymbol.prototype.ensureNotLiteral = function() {
+  types.TupleType.prototype.unpack = function() {
+    return this.expressionsTypes[0];
+  };
+
+  types.TupleType.prototype.access = function(id) {
+    return this.expressionsTypes[id];
+  };
+
+  types.TupleType.prototype.eq = function(other) {
+    if (this.expressionsTypes.length == 1)
+      return other.eq(this.expressionsTypes[0]);
+
+    if (this.CLASS != other.CLASS || this.expressionsTypes.length != other.expressionsTypes.length)
+      return false;
+
+    for(var i = 0; i < this.expressionsTypes.length; i++) {
+      if (!this.expressionsTypes[i].eq(other.expressionsTypes[i]))
+        return false;
+    }
+    return true;
+  };
+
+  types.TupleType.prototype.isSubtype = function(other) {
+    if (this.expressionsTypes.length == 1) {
+      return this.unpack().isSubtype(other);
+    }
+
+    if (this.CLASS != other.CLASS || this.expressionsTypes.length != other.expressionsTypes.length)
+      return false;
+
+    for(var i = 0; i < this.expressionsTypes.length; i++) {
+      if (!this.expressionsTypes[i].isSubtype(other.expressionsTypes[i]))
+        return false;
+    }
+    return true;
+  };
+
+  types.TupleType.prototype.ensureNotLiteral = types.NamedType.prototype.ensureNotLiteral = function() {
     return this;
   };
 
-  types.NamedTypeSymbol.prototype.isSubtype = function (anotherType) {
-    if (anotherType == this || anotherType == this.ensureNotLiteral())
-      return true;
-    if (this.parent)
-      return this.parent.isSubtype(anotherType);
-    return false;
-  };
-
-  types.NamedTypeSymbol.prototype.findCommonType = function(anotherType) {
+  types.NamedType.prototype.findCommonType = function(anotherType) {
     var currentType = this;
     while(currentType !== undefined) {
       if (anotherType === currentType || anotherType.isSubtype(currentType))
@@ -66,21 +114,21 @@
     }
   };
 
-  var Double = new types.NamedTypeSymbol("Double");
+  var Double = new types.NamedType("Double");
 
-  var DoubleLiteral = new types.NamedTypeSymbol("DoubleLiteral", Double);
+  var DoubleLiteral = new types.NamedType("DoubleLiteral", Double);
 
   DoubleLiteral.ensureNotLiteral = function() {
     return builtInTypes.Double;
   };
 
-  var IntegerLiteral = new types.NamedTypeSymbol("IntegerLiteral", DoubleLiteral);
+  var IntegerLiteral = new types.NamedType("IntegerLiteral", DoubleLiteral);
 
   IntegerLiteral.ensureNotLiteral = function() {
     return builtInTypes.Int;
   };
 
-  var Integer = new types.NamedTypeSymbol("Int");
+  var Integer = new types.NamedType("Int");
 
   var builtInTypes = {
     "Int": Integer,

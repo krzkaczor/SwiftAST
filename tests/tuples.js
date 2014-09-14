@@ -2,6 +2,7 @@ var assert = require("assert");
 var fs = require("fs");
 var path = 'tests/fixtures/';
 var errors = require("../SwiftScript/models/errors.js");
+var typeSystem = require("../SwiftScript/models/typeSystem.js");
 var SwiftScript = require("../SwiftScript/swiftScript.js");
 
 describe("Tuples", function() {
@@ -42,5 +43,38 @@ describe("Tuples", function() {
     var input = "let (a, b) = 5.0;";
 
     assert.throws( function() { return swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+  });
+
+  it("should work with type annotation", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    var intAndInt = globalScope.resolve("intAndInt");
+    assert.equal(intAndInt.type.CLASS, "TupleType");
+    assert.equal(intAndInt.type.expressionsTypes[0].eq(typeSystem.builtInTypes.Int), true);
+    assert.equal(intAndInt.type.expressionsTypes[1].eq(typeSystem.builtInTypes.Int), true);
+  });
+
+  it("should treat single-element-tuple as named type", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    var intAndInt = globalScope.resolve("singleTuple");
+    assert.ok(intAndInt.type.eq(typeSystem.builtInTypes.Double));
+  });
+
+  it("should treat single-element-tuple explicit typed as named type", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    var intAndInt = globalScope.resolve("singleTupleExplicitTyped");
+    assert.ok(intAndInt.type.eq(typeSystem.builtInTypes.Double));
+  });
+
+  it("should allow ", function() {
+    var input = "let doubleTuple: (Double, Double) = (5, 5);";
   });
 });

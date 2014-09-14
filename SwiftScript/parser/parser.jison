@@ -1,5 +1,5 @@
 /lex
-%right ASTERIX
+%right ARROW
 %left ASTERIX
 %left PLUS
 %left DOT
@@ -82,8 +82,14 @@ type-annotation
     ;
 
 type
-    : id                        { $$ = new NamedTypeNode($1) }
-    | type ARROW type           { $$ = new FunctionTypeNode([$1], $3) }
+    : id                                 { $$ = new NamedTypeNode($1) }
+    | type ARROW type                    { $$ = new FunctionTypeNode($1, $3) }
+    | LBRAC comma-separated-type RBRAC   { $$ = new TupleTypeNode($2) }
+    ;
+
+comma-separated-type
+    : type                                      { $$ = [$1] }
+    | comma-separated-type COMMA type           { $$ = $1; $1.push($3) }
     ;
 
 stat-end
@@ -92,17 +98,29 @@ stat-end
     ;
 
 id
-    : IDENT                       { $$ = new Id($1) }
+    : IDENT                     { $$ = new Id($1) }
+    ;
+
+number
+    : NUMBER                    { $$ = new IntegerNumberLiteral($1) }
+    ;
+
+float-number
+    : FLOAT_NUMBER              { $$ = new DoubleNumberLiteral($1) }
     ;
 
 expression
-    : NUMBER                      { $$ = new IntegerNumberLiteral($1) }
-    | FLOAT_NUMBER                { $$ = new DoubleNumberLiteral($1) }
-    | id
+    : value-expression
     | expression-binary-operator
     | array
     | function-call
     | parenthesized-expression
+    ;
+
+value-expression
+    : number
+    | float-number
+    | id
     ;
 
 parenthesized-expression
@@ -110,11 +128,11 @@ parenthesized-expression
     ;
 
 expression-binary-operator
-    : expression PLUS expression    { $$ = new OperatorCall($2, $1, $3) }
-    | expression ASTERIX expression { $$ = new OperatorCall($2, $1, $3) }
-    | expression DOT expression     { $$ = new OperatorCall($2, $1, $3) }
-    | expression RNGICL expression  { $$ = new OperatorCall($2, $1, $3) }
-    | expression RNGECL expression  { $$ = new OperatorCall($2, $1, $3) }
+    : expression PLUS expression          { $$ = new OperatorCall($2, $1, $3) }
+    | expression ASTERIX expression       { $$ = new OperatorCall($2, $1, $3) }
+    | expression DOT value-expression     { $$ = new MemberAccess($1, $3) }
+    | expression RNGICL expression        { $$ = new OperatorCall($2, $1, $3) }
+    | expression RNGECL expression        { $$ = new OperatorCall($2, $1, $3) }
     ;
 
 function-call

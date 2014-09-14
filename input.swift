@@ -1,3 +1,4 @@
-let intConst = 3;
-let intConst2:Int = 5;
-let intConst3 = intConst + intConst2;
+let intAndDouble = (1, 1.5);
+
+let intConst:Int = intAndDouble.0;
+let doubleConst:Double = intAndDouble.1;

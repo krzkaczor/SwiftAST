@@ -6,7 +6,7 @@
 
   nodes.TopLevelBlock.prototype.fillType = function () {
     var self = this;
-    this.scope = new scopes.GlobalScope();
+    this.scope = new scopes.RootScope();
 
     this.statements.forEach(function (statement) {
       statement.fillType(self.scope);
@@ -28,6 +28,8 @@
     this.scope = scope;
     if (this.expression)
       this.type = this.expression.fillType(scope).type;
+
+    return this;
   };
 
   nodes.ConstantDeclaration.prototype.fillType = function (scope) {
@@ -44,7 +46,7 @@
     if (this.typeBare) {
       var typeDeclared = this.typeBare.fillType(scope).type;
     }
-    if (this.typeBare && typeDeclared !== expressionType) {
+    if (this.typeBare && !typeDeclared.eq(expressionType)) {
       throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
     }
 
@@ -82,9 +84,11 @@
     });
 
     this.block.fillType(this.scope);
-    this.paramsTypes = this.parameters.map(function(param) { return param.type});
+    this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}));
     this.returnType = this.scope.resolve(this.returnTypeDeclaredBare.value);
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
+
+    return this;
   };
 
   nodes.Parameter.prototype.fillType = function(scope) {
@@ -96,7 +100,7 @@
 
   nodes.IntegerNumberLiteral.prototype.fillType = function (scope) {
     this.scope = scope;
-    this.type = scope.resolve("IntegerLiteral"); //could be done while creation of object
+    this.type = scope.resolve("IntegerLiteral");
     return this;
   };
 
@@ -106,7 +110,21 @@
   };
 
   nodes.FunctionTypeNode.prototype.fillType = function(scope) {
-    this.type = new typeSystem.types.FunctionType([this.paramType[0].fillType(scope).type], this.returnType.fillType(scope).type);
+    this.type = new typeSystem.types.FunctionType(this.paramType.fillType(scope).type, this.returnType.fillType(scope).type);
+
+    return this;
+  };
+
+  nodes.TupleTypeNode.prototype.fillType = function(scope){
+    this.types = this.typesBare.map(function(type) {
+      return type.fillType(scope).type;
+    });
+
+    if (this.types.length == 0) {
+      this.type = this.type[0];
+    } else {
+      this.type = new typeSystem.types.TupleType(this.types);
+    }
 
     return this;
   };
@@ -142,13 +160,20 @@
     return this;
   };
 
+  nodes.ParenthesizedExpression.prototype.fillType = function(scope) {
+    var expressionsTypes = this.expressions.map(function(expr) {
+      return expr.fillType(scope).type.ensureNotLiteral();
+    });
+
+    this.type = new typeSystem.types.TupleType(expressionsTypes);
+    return this;
+  };
+
   nodes.FunctionCall.prototype.fillType = function (scope) {
     this.scope = scope;
     this.functionType = this.scope.resolve(this.callee).type;
     this.type = this.functionType.returnType;
-    this.args.forEach(function(arg) {
-      arg.fillType(scope);
-    });
+    this.args.fillType(scope);
 
     this.verifyTypes(scope);
 
@@ -156,21 +181,26 @@
   };
 
   nodes.FunctionCall.prototype.verifyTypes = function(scope) {
-    if (this.args.length != this.functionType.paramsTypes.length)
-      throw new errors.TypeInconsistencyError([this.args, this.functionType.paramsTypes]);
+    var argsType = this.args.fillType(scope).type,
+        paramType = this.functionType.paramType;
 
-    for(var i = 0;i < this.args.length; i++) {
-      var argType = this.args[i].type,
-          paramType = this.functionType.paramsTypes[i];
-
-      if ( !argType.eq(paramType) && !argType.isSubtype(paramType))
-        throw new errors.TypeInconsistencyError([argType, paramType]);
-    }
+    if( !argsType.eq(paramType) && !argsType.isSubtype(paramType))
+      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType])
   };
 
-  //nodes.MemberAccess.prototype.fillType = function(scope) {
-  //  return scope.resolve.
-  //}
+  nodes.MemberAccess.prototype.fillType = function(scope) {
+    this.left.fillType(scope);
+    this.right.fillType(scope);
+    this.verifyTypes(scope);
+
+    this.type = this.left.type.access(this.right.fillType(scope).value);
+    return this;
+  };
+
+  nodes.MemberAccess.prototype.verifyTypes = function() {
+    if (!this.left.type.accessible)
+      throw new errors.TypeNotAccessibleError(this);
+  };
 
   nodes.OperatorCall.prototype.fillType = function (scope) {
     this.scope = scope;

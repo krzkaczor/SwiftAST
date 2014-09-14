@@ -38,18 +38,18 @@
   var scopes = {};
 
   scopes.LocalScope = function(parent) {
-    var localScope = Object.create(new Scope());
-    localScope.parent = parent;
-    return localScope;
+    this.parent = parent;
   };
 
-  scopes.GlobalScope = function() {
+  scopes.LocalScope.prototype = new Scope();
+
+  scopes.RootScope = function() {
     this.loadBuiltInTypes();
   };
 
-  scopes.GlobalScope.prototype = new Scope();
+  scopes.RootScope.prototype = new Scope();
 
-  scopes.GlobalScope.prototype.loadBuiltInTypes = function() {
+  scopes.RootScope.prototype.loadBuiltInTypes = function() {
     var self = this;
     for(var typeName in typeSystem.builtInTypes) {
       if (!typeSystem.builtInTypes.hasOwnProperty(typeName))

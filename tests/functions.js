@@ -14,16 +14,18 @@ describe("Functions", function() {
     var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
     var ast = swiftScript.astWithTypes(input);
 
-    assert.equal(ast.statements[0].paramsTypes[0].name, "Int");
-    assert.equal(ast.statements[0].returnType.name, "Int");
+    var returningIntFunctionSignature = ast.scope.resolve("returningIntFunction").type;
+    assert.equal(returningIntFunctionSignature.paramType.expressionsTypes[0].name, "Int");
+    assert.equal(returningIntFunctionSignature.returnType.name, "Int");
   });
 
   it('should fill types of double function correctly', function() {
     var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
     var ast = swiftScript.astWithTypes(input);
 
-    assert.equal(ast.statements[1].paramsTypes[0].name, "Double");
-    assert.equal(ast.statements[1].returnType.name, "Double");
+    var returningIntFunctionSignature = ast.scope.resolve("returningDoubleFunction").type;
+    assert.equal(returningIntFunctionSignature.paramType.expressionsTypes[0].name, "Double");
+    assert.equal(returningIntFunctionSignature.returnType.name, "Double");
   });
 
   it('should raise exception when arguments do not match function signature', function() {
@@ -37,9 +39,9 @@ describe("Functions", function() {
     var ast = swiftScript.astWithTypes(input);
 
     var scope = ast.scope;
-    var applyZero = scope.resolve("applyZero");
-    assert.equal(applyZero.type.returnType.name, "Int");
-    assert.equal(applyZero.type.paramsTypes[0].CLASS, "FunctionType");
+    var applyZero = scope.resolve("applyZero").type;
+    assert.equal(applyZero.returnType.name, "Int");
+    assert.equal(applyZero.paramType.expressionsTypes[0].CLASS, "FunctionType");
   });
 
 });
