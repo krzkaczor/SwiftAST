@@ -72,6 +72,7 @@
   nodes.NamedTypeNode = function(name) {
     this.CLASS = "NamedTypeNode";
     this.name = name.value;
+    this.id; // set directly by parser
   };
 
   nodes.FunctionTypeNode = function(paramType, returnType) {

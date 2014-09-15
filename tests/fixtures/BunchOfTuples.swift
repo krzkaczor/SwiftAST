@@ -11,5 +11,9 @@ let singleTuple = (6.6);
 
 let singleTupleExplicitTyped: (Double) = (6.6);
 
-let intConst:Int = intAndDouble.0;
-let doubleConst:Double = intAndDouble.1;
+let namedTuple: (x:Int, y:Double) = (5, 19);
+
+let intConst2:Int = namedTuple.0;
+let doubleConst2:Double = namedTuple.1;
+let x:Int = namedTuple.x;
+let y:Double = namedTuple.y;

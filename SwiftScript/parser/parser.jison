@@ -88,8 +88,13 @@ type
     ;
 
 comma-separated-type
-    : type                                      { $$ = [$1] }
-    | comma-separated-type COMMA type           { $$ = $1; $1.push($3) }
+    : type-or-name-and-type                              { $$ = [$1]; }
+    | comma-separated-type COMMA type-or-name-and-type   { $$ = $1; $1.push($3) }
+    ;
+
+type-or-name-and-type
+    : id COL type                              { $$ = $3; $$.id = $1 }
+    | type                                     { $$ = $1; }
     ;
 
 stat-end

@@ -25,17 +25,22 @@
     return false; //for now don't care about function covariance
   };
 
-  types.TupleType = function(expressionsTypes) {
+  types.TupleType = function(expressionsTypes, ids) {
     this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes;
     this.canUnpack = expressionsTypes.length == 1;
     this.accessible = true;
+    this.ids = ids;
 
     this.scope = new scopes.RootScope();
 
     var self = this;
     expressionsTypes.forEach(function(type, i) {
       self.scope.defineConstant(i, type);
+      //has additional id
+      if (ids && ids[i]) {
+        self.scope.defineConstant(ids[i].value, type);
+      }
     });
     };
 
@@ -44,7 +49,7 @@
   };
 
   types.TupleType.prototype.access = function(id) {
-    return this.expressionsTypes[id];
+    return this.scope.resolve(id).type;
   };
 
   types.TupleType.prototype.eq = function(other) {
@@ -81,7 +86,7 @@
       return type.ensureNotLiteral();
     });
 
-    return new types.TupleType(notLiteralTypes);
+    return new types.TupleType(notLiteralTypes, this.ids);
   };
 
   types.NamedType.prototype.ensureNotLiteral = function() {

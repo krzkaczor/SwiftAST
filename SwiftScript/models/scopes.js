@@ -4,7 +4,6 @@
   var util = require('util');
 
   var Scope = function() {
-    this.symbols = {};
   };
 
   Scope.prototype.inspect = function() {
@@ -39,11 +38,13 @@
 
   scopes.LocalScope = function(parent) {
     this.parent = parent;
+    this.symbols = {};
   };
 
   scopes.LocalScope.prototype = new Scope();
 
   scopes.RootScope = function(builtInTypes) {
+    this.symbols = {};
     this.loadBuiltInTypes(builtInTypes);
   };
 

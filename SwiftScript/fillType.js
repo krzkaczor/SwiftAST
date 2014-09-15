@@ -51,11 +51,10 @@
       }
 
       this.type = typeDeclared.ensureNotLiteral();
-      scope.defineConstant(this.name, this.type);
     } else {
       this.type = expressionType.ensureNotLiteral();
-      scope.defineConstant(this.name, this.type);
     }
+    scope.defineConstant(this.name, this.type);
     return this;
   };
 
@@ -123,10 +122,14 @@
       return type.fillType(scope).type;
     });
 
-    if (this.types.length == 0) {
-      this.type = this.type[0];
+    var ids = this.typesBare.map(function(type) {
+      return type.id;
+    });
+
+    if (this.types.length == 1) {
+      this.type = this.types[0];
     } else {
-      this.type = new typeSystem.types.TupleType(this.types);
+      this.type = new typeSystem.types.TupleType(this.types, ids);
     }
 
     return this;
@@ -184,10 +187,9 @@
 
   nodes.MemberAccess.prototype.fillType = function(scope) {
     this.left.fillType(scope);
-    this.right.fillType(scope);
     this.verifyTypes(scope);
 
-    this.type = this.left.type.access(this.right.fillType(scope).value);
+    this.type = this.left.type.access(this.right.value);
     return this;
   };
 

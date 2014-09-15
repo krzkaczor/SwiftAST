@@ -88,7 +88,17 @@ describe("Tuples", function() {
     var ast = swiftScript.astWithTypes(input);
     var globalScope = ast.scope;
 
-    assert.ok(globalScope.resolve("intConst").type.eq(typeSystem.builtInTypes.Int));
-    assert.ok(globalScope.resolve("doubleConst").type.eq(typeSystem.builtInTypes.Double));
+    assert.ok(globalScope.resolve("intConst2").type.eq(typeSystem.builtInTypes.Int));
+    assert.ok(globalScope.resolve("doubleConst2").type.eq(typeSystem.builtInTypes.Double));
+  });
+
+  it("should allow access a member by id", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    var namedTuple = globalScope.resolve("namedTuple").type;
+    assert.ok(namedTuple.access("x").eq(typeSystem.builtInTypes.Int));
+    assert.ok(namedTuple.access("y").eq(typeSystem.builtInTypes.Double));
   });
 });
