@@ -25,17 +25,21 @@
     return false; //for now don't care about function covariance
   };
 
+  types.FunctionType.prototype.ensureNotLiteral = function() {
+    return this;
+  };
+
   types.TupleType = function(expressionsTypes, ids) {
     this.CLASS = "TupleType";
-    this.expressionsTypes = expressionsTypes;
-    this.canUnpack = expressionsTypes.length == 1;
+    this.expressionsTypes = expressionsTypes === undefined ? [] : expressionsTypes;
+    this.canUnpack = this.expressionsTypes.length == 1;
     this.accessible = true;
     this.ids = ids;
 
     this.scope = new scopes.RootScope();
 
     var self = this;
-    expressionsTypes.forEach(function(type, i) {
+    this.expressionsTypes.forEach(function(type, i) {
       self.scope.defineConstant(i, type);
       //has additional id
       if (ids && ids[i]) {

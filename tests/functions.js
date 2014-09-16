@@ -3,6 +3,7 @@ var fs = require("fs");
 var path = 'tests/fixtures/';
 var errors = require("../SwiftScript/models/errors.js");
 var SwiftScript = require("../SwiftScript/swiftScript.js");
+var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
 
 describe("Functions", function() {
   var swiftScript;
@@ -42,6 +43,27 @@ describe("Functions", function() {
     var applyZero = scope.resolve("applyZero").type;
     assert.equal(applyZero.returnType.name, "Int");
     assert.equal(applyZero.paramType.expressionsTypes[0].CLASS, "FunctionType");
+  });
+
+  it('should allow function without parameters', function() {
+    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    input += "let funcThatTakesOneArg: () -> Int = returnFive;";
+    var ast = swiftScript.astWithTypes(input);
+
+    var scope = ast.scope;
+    var returnFive = scope.resolve("returnFive").type;
+    assert.equal(returnFive.returnType.eq(typeSystem.builtInTypes.Int), true);
+  });
+
+  it('should allow function without parameters', function() {
+    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    var ast = swiftScript.astWithTypes(input);
+
+    var scope = ast.scope;
+    var doNothing = scope.resolve("doNothing").type;
+    var doNothing2 = scope.resolve("doNothing2").type;
+    assert.equal(doNothing.eq(doNothing2), true);
+    assert.equal(doNothing.returnType.eq(new typeSystem.types.TupleType()), true);
   });
 
 });

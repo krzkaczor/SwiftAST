@@ -87,7 +87,11 @@
 
     this.block.fillType(this.scope);
     this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}));
-    this.returnType = this.scope.resolve(this.returnTypeDeclaredBare.value);
+    if (this.returnTypeDeclaredBare)
+      this.returnType = this.returnTypeDeclaredBare.fillType(parentScope).type;
+    else {
+      this.returnType = new typeSystem.types.TupleType([]);
+    }
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
 
     return this;

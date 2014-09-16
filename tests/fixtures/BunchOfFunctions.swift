@@ -13,3 +13,15 @@ func applyZero (function: Int -> Int) -> Int {
 func returnEq (x: Int) -> Int {
     return x;
 }
+
+func returnFive() -> Int {
+  return 5;
+}
+
+func doNothing () -> () {
+    return ;
+}
+
+func doNothing2 () {
+    return ;
+}

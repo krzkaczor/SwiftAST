@@ -45,11 +45,16 @@ declaration
     ;
 
 function-declaration
-    : FUNC id LBRAC parameters RBRAC ARROW id block  { $$ = new FunctionDeclaration($2, $4, $8, $7) }
+    : FUNC id LBRAC parameters RBRAC ARROW type block  { $$ = new FunctionDeclaration($2, $4, $8, $7) }
     | FUNC id LBRAC parameters RBRAC block           { $$ = new FunctionDeclaration($2, $4, $6) }
     ;
 
 parameters
+    : { $$ = [] }
+    | parameters-list
+    ;
+
+parameters-list
     : parameter { $$ = [$1] }
     | parameters COMMA parameter { $$ = $1; $$.push(parameter); }
     ;
@@ -88,7 +93,8 @@ type
     ;
 
 comma-separated-type
-    : type-or-name-and-type                              { $$ = [$1]; }
+    :                                                    { $$ = []; }
+    | type-or-name-and-type                              { $$ = [$1]; }
     | comma-separated-type COMMA type-or-name-and-type   { $$ = $1; $1.push($3) }
     ;
 
