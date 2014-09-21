@@ -110,6 +110,12 @@
     return this;
   };
 
+  nodes.StringLiteral.prototype.fillType = function (scope) {
+    this.scope = scope;
+    this.type = scope.resolve("StringLiteral");
+    return this;
+  }
+
   nodes.NamedTypeNode.prototype.fillType = function(scope) {
     this.type = scope.resolve(this.name);
     return this;

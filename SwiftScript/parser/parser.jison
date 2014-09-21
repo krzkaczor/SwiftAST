@@ -120,6 +120,10 @@ float-number
     : FLOAT_NUMBER              { $$ = new DoubleNumberLiteral($1) }
     ;
 
+string
+    : STRING                    { $$ = new StringLiteral($1) }
+    ;
+
 expression
     : value-expression
     | expression-binary-operator
@@ -132,6 +136,7 @@ value-expression
     : number
     | float-number
     | id
+    | string
     ;
 
 parenthesized-expression

@@ -91,6 +91,11 @@
     this.value = parseInt(value);
   };
 
+  nodes.StringLiteral = function (value) {
+    this.CLASS = "StringLiteral";
+    this.value = value;
+  };
+
   nodes.IdentifierPattern = function(name, type) {
     this.CLASS = "IdentifierPattern";
     this.name = name.value;

@@ -1,2 +1,1 @@
-let dupa = "TEST TEST  ";
-
+let t = "test"

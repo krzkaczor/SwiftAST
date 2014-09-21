@@ -107,10 +107,14 @@
     }
   };
 
+  var String = new types.NamedType("String");
+  var StringLiteral = new types.NamedType("StringLiteral", String);
+  StringLiteral.ensureNotLiteral = function() {
+    return builtInTypes.String;
+  };
+
   var Double = new types.NamedType("Double");
-
   var DoubleLiteral = new types.NamedType("DoubleLiteral", Double);
-
   DoubleLiteral.ensureNotLiteral = function() {
     return builtInTypes.Double;
   };
@@ -124,8 +128,10 @@
   var Integer = new types.NamedType("Int");
 
   var builtInTypes = {
+    "String": String,
     "Int": Integer,
     "Double": Double,
+    "StringLiteral": StringLiteral,
     "IntegerLiteral": IntegerLiteral,
     "DoubleLiteral": DoubleLiteral
   };
