@@ -26,7 +26,7 @@
 "("                   return o ('LBRAC');
 ")"                   return o ('RBRAC');
 
-[0-9]+"."[0-9]+        return o ('FLOAT_NUMBER');
+[0-9]+"."[0-9]+       return o ('FLOAT_NUMBER');
 [0-9]+                return o ('NUMBER');
 
 

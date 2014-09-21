@@ -46,7 +46,7 @@ declaration
 
 function-declaration
     : FUNC id LBRAC parameters RBRAC ARROW type block  { $$ = new FunctionDeclaration($2, $4, $8, $7) }
-    | FUNC id LBRAC parameters RBRAC block           { $$ = new FunctionDeclaration($2, $4, $6) }
+    | FUNC id LBRAC parameters RBRAC block             { $$ = new FunctionDeclaration($2, $4, $6) }
     ;
 
 parameters
