@@ -1,7 +1,19 @@
-func getPoint(point: (x: Int, y: Int) ) -> () {
-  return ();
-}
+let intAndDouble = (10, 10.5);
 
-let tuple2 = (a: 5, b: 6);
+let (intConst, doubleConst) = intAndDouble;
 
-getPoint((x: 5, y: 6));
+let ((a, b), c) = (intAndDouble, 11);
+
+let intAndInt: (Int, Int) = (4,5);
+let doubleAndDouble: (Double, Double) = (5, 5);
+
+let singleTuple = (6.6);
+
+let singleTupleExplicitTyped: (Double) = (6.6);
+
+let namedTuple: (x:Int, y:Double) = (5, 19);
+
+let intConst2:Int = namedTuple.0;
+let doubleConst2:Double = namedTuple.1;
+let x:Int = namedTuple.x;
+let y:Double = namedTuple.y;

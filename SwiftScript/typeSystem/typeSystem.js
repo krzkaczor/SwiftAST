@@ -36,6 +36,10 @@
     this.accessible = true;
     this.ids = ids === undefined ? [] : ids;
 
+    if(this.ids[0] && typeof this.ids[0] === 'object') {
+      throw new Error("dupa");
+    }
+
     this.scope = new scopes.RootScope();
 
     var self = this;
@@ -43,7 +47,7 @@
       self.scope.defineConstant(i, type);
       //has additional id
       if (ids && ids[i]) {
-        self.scope.defineConstant(ids[i].value, type);
+        self.scope.defineConstant(ids[i], type);
       }
     });
   };
@@ -93,8 +97,8 @@
         continue;
       }
 
-      var id = this.ids[i].value,
-          otherId = other.ids[i].value;
+      var id = this.ids[i],
+          otherId = other.ids[i];
 
       if (id !== otherId) {
         return false;

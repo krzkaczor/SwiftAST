@@ -99,7 +99,7 @@ comma-separated-type
     ;
 
 type-or-name-and-type
-    : id COL type                              { $$ = $3; $$.id = $1 }
+    : id COL type                              { $$ = $3; $$.id = $1.value }
     | type                                     { $$ = $1; }
     ;
 
@@ -163,5 +163,5 @@ comma-separated-expression
 
  expression-or-expression-with-id
     : expression
-    | id COL expression { $$ = $3; $$.id = $1 }
+    | id COL expression { $$ = $3; $$.id = $1.value }
     ;
