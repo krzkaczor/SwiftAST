@@ -37,7 +37,10 @@
 
   nodes.ParenthesizedExpression = function(expressions) {
     this.CLASS = "ParenthesizedExpression";
-    this.expressions = expressions;
+    this.expressions = expressions? expressions : [];
+    this.ids = this.expressions.map(function(expr) {
+      return expr.id;
+    });
   };
 
   nodes.ConstantDeclaration = function (pattern, expression) {

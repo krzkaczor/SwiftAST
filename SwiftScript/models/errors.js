@@ -1,6 +1,6 @@
 var TypeInconsistencyError = function(types) {
   this.name = "TypeInconsistencyError";
-  this.message = "Types inconsistency: " + types.map(function(type) {return type && type.name ? type.name : "Undefined" }).join(", ");
+  this.message = "Types inconsistency: " + types.map(function(type) {return type && type.CLASS ? type.CLASS : "Undefined" }).join(", ");
   this.types = types;
 };
 

@@ -140,7 +140,8 @@ value-expression
     ;
 
 parenthesized-expression
-    : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) }
+    : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) },
+    | LBRAC RBRAC { $$ = new ParenthesizedExpression() },
     ;
 
 expression-binary-operator
@@ -156,6 +157,11 @@ function-call
     ;
 
 comma-separated-expression
-    : expression                       { $$ = [$1] }
-    | comma-separated-expression COMMA expression { $$ = $1; $$.push($3) }
+    : expression-or-expression-with-id                                  { $$ = [$1] },
+    | comma-separated-expression COMMA expression-or-expression-with-id { $$ = $1; $$.push($3) }
+    ;
+
+ expression-or-expression-with-id
+    : expression
+    | id COL expression { $$ = $3; $$.id = $1 }
     ;

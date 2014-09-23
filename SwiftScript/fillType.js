@@ -74,7 +74,7 @@
       return expr.fillType(scope).type;
     });
 
-    this.type = new typeSystem.types.TupleType(this.expressionsTypes);
+    this.type = new typeSystem.types.TupleType(this.expressionsTypes, this.ids);
     return this;
   };
 
