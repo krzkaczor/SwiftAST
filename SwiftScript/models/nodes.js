@@ -43,6 +43,11 @@
     });
   };
 
+  nodes.IfStatement = function(condition, block) {
+    this.condition = condition;
+    this.block = block;
+  };
+
   nodes.ConstantDeclaration = function (pattern, expression) {
     this.CLASS = "ConstantDeclaration";
     this.pattern = pattern;
@@ -141,6 +146,13 @@
 
   nodes.OperatorCall = function (operator, left, right) {
     this.CLASS = "OperatorCall";
+    this.operator = operator;
+    this.left = left;
+    this.right = right;
+  };
+
+  nodes.LogicalOperatorCall = function (operator, left, right) {
+    this.CLASS = "LogicalOperatorCall";
     this.operator = operator;
     this.left = left;
     this.right = right;

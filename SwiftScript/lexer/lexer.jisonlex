@@ -4,20 +4,32 @@
 %x string
 
 %%
-
 "="                   return o ('ASSIGN');
+
+"_"                   return o ('USCORE');
+"->"                  return o ('ARROW');
+"."                   return o ('DOT');
+","                   return o ('COMMA');
+":"                   return o ('COL');
+";"                   return o ('SEM');
+\n                    return o ('NL');
 
 /* OPERATORS*/
 "*"                   return o ('ASTERIX');
+"/"                   return o ('DIV');
 "+"                   return o ('PLUS');
+"-"                   return o ('MINUS');
 "..."                 return o ('RNGICL');
 "..<"                 return o ('RNGECL');
 
+/* KEYWORDS */
 "let"                 return o ('LET');
 "return"              return o ('RETURN');
 "func"                return o ('FUNC');
 "for"                 return o ('FOR');
 "in"                  return o ('IN');
+"if"                  return o ('IF');
+"else"                return o ('ELSE');
 
 "["                   return o ('LSBRAC');
 "]"                   return o ('RSBRAC');
@@ -29,14 +41,6 @@
 [0-9]+"."[0-9]+       return o ('FLOAT_NUMBER');
 [0-9]+                return o ('NUMBER');
 
-
-"_"                   return o ('USCORE');
-"->"                  return o ('ARROW');
-"."                   return o ('DOT');
-","                   return o ('COMMA');
-":"                   return o ('COL');
-";"                   return o ('SEM');
-\n                    return o ('NL');
 
 
 

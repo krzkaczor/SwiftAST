@@ -24,6 +24,13 @@
     return this;
   };
 
+  nodes.IfStatement.prototype.fillType = function(scope) {
+    this.condition.fillType(scope);
+    this.block.fillType(scope);
+
+    return this;
+  };
+
   nodes.ReturnStatement.prototype.fillType = function(scope) {
     this.scope = scope;
     if (this.expression)
@@ -85,7 +92,6 @@
       self.scope.defineConstant(parameter.name, parameter.fillType(self.scope).type);
     });
 
-    this.block.fillType(this.scope);
     this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}));
     if (this.returnTypeDeclaredBare)
       this.returnType = this.returnTypeDeclaredBare.fillType(parentScope).type;
@@ -93,6 +99,7 @@
       this.returnType = new typeSystem.types.TupleType([]);
     }
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
+    this.block.fillType(this.scope);
 
     return this;
   };
@@ -214,6 +221,15 @@
     this.right.fillType(scope);
 
     this.type = this.left.type.findCommonType(this.right.type) || this.left.type.ensureNotLiteral().findCommonType(this.right.type.ensureNotLiteral());
+    return this;
+  };
+
+  nodes.LogicalOperatorCall.prototype.fillType = function (scope) {
+    this.scope = scope;
+    this.left.fillType(scope);
+    this.right.fillType(scope);
+
+    this.type = typeSystem.builtInTypes.Boolean; //@todo
     return this;
   };
 })();

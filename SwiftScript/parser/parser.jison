@@ -1,7 +1,10 @@
 /lex
 %right ARROW
+%right ASSIGN
 %left ASTERIX
+%left DIV
 %left PLUS
+%left MINUS
 %left DOT
 %left RNGICL
 %left RNGECL
@@ -15,7 +18,7 @@ top-level-block
     ;
 
 block
-    : LCBRAC NL statements RCBRAC { $$ = new Block($3); }
+    : LCBRAC NL statements RCBRAC stat-end { $$ = new Block($3); }
     ;
 
 statements
@@ -24,10 +27,15 @@ statements
     ;
 
 statement
-    : declaration stat-end
+    : declaration
     | for-in-stat
     | expression stat-end
     | return stat-end
+    | if-stat
+    ;
+
+if-stat
+    : IF expression block    { $$ = new IfStatement($2, $3); }
     ;
 
 return
@@ -64,7 +72,7 @@ parameter
     ;
 
 let-declaration
-    : LET pattern ASSIGN expression  { $$ = new ConstantDeclaration($2, $4) }
+    : LET pattern ASSIGN expression stat-end  { $$ = new ConstantDeclaration($2, $4) }
     ;
 
 pattern
@@ -145,11 +153,14 @@ parenthesized-expression
     ;
 
 expression-binary-operator
-    : expression PLUS expression          { $$ = new OperatorCall($2, $1, $3) }
-    | expression ASTERIX expression       { $$ = new OperatorCall($2, $1, $3) }
+    : expression ASTERIX expression       { $$ = new OperatorCall($2, $1, $3) }
+    | expression DIV expression         { $$ = new OperatorCall($2, $1, $3) }
+    | expression PLUS expression          { $$ = new OperatorCall($2, $1, $3) }
+    | expression MINUS expression         { $$ = new OperatorCall($2, $1, $3) }
     | expression DOT value-expression     { $$ = new MemberAccess($1, $3) }
     | expression RNGICL expression        { $$ = new OperatorCall($2, $1, $3) }
     | expression RNGECL expression        { $$ = new OperatorCall($2, $1, $3) }
+    | expression ASSIGN ASSIGN expression  { $$ = new LogicalOperatorCall("==", $1, $4) }
     ;
 
 function-call
