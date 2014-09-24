@@ -104,6 +104,11 @@
     this.value = value;
   };
 
+  nodes.BoolLiteral = function (value) {
+    this.CLASS = "BoolLiteral";
+    this.value = value;
+  };
+
   nodes.IdentifierPattern = function(name, type) {
     this.CLASS = "IdentifierPattern";
     this.name = name.value;

@@ -30,6 +30,8 @@
 "in"                  return o ('IN');
 "if"                  return o ('IF');
 "else"                return o ('ELSE');
+"true"                return o ('TRUE');
+"false"               return o ('FALSE');
 
 "["                   return o ('LSBRAC');
 "]"                   return o ('RSBRAC');

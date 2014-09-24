@@ -132,6 +132,11 @@ string
     : STRING                    { $$ = new StringLiteral($1) }
     ;
 
+boolean
+    : TRUE                      { $$ = new BoolLiteral($1) }
+    | FALSE                     { $$ = new BoolLiteral($1) }
+    ;
+
 expression
     : value-expression
     | expression-binary-operator
@@ -145,6 +150,7 @@ value-expression
     | float-number
     | id
     | string
+    | boolean
     ;
 
 parenthesized-expression

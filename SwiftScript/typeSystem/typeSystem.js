@@ -140,10 +140,10 @@
     return builtInTypes.String;
   };
 
-  var Boolean = new types.NamedType("Boolean");
-  var BooleanLiteral = new types.NamedType("BooleanLiteral", Boolean);
-  BooleanLiteral.ensureNotLiteral = function () {
-    return builtInTypes.Boolean;
+  var Bool = new types.NamedType("Bool");
+  var BoolLiteral = new types.NamedType("BoolLiteral", Boolean);
+  BoolLiteral.ensureNotLiteral = function () {
+    return builtInTypes.Bool;
   };
 
   var Double = new types.NamedType("Double");
@@ -162,7 +162,8 @@
 
   var builtInTypes = {
     "String": String,
-    "Boolean": Boolean,
+    "Bool": Bool,
+    "BoolLiteral": BoolLiteral,
     "Int": Integer,
     "Double": Double,
     "StringLiteral": StringLiteral,

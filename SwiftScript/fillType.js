@@ -121,7 +121,13 @@
     this.scope = scope;
     this.type = scope.resolve("StringLiteral");
     return this;
-  }
+  };
+
+  nodes.BoolLiteral.prototype.fillType = function (scope) {
+    this.scope = scope;
+    this.type = scope.resolve("BoolLiteral");
+    return this;
+  };
 
   nodes.NamedTypeNode.prototype.fillType = function(scope) {
     this.type = scope.resolve(this.name);
@@ -229,7 +235,7 @@
     this.left.fillType(scope);
     this.right.fillType(scope);
 
-    this.type = typeSystem.builtInTypes.Boolean; //@todo
+    this.type = typeSystem.builtInTypes.Bool; //@todo
     return this;
   };
 })();
