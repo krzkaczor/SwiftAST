@@ -4,6 +4,9 @@
 %x string
 
 %%
+<<EOF>>               return o ('EOF');
+$                     return o ('EOF');
+
 "="                   return o ('ASSIGN');
 
 "_"                   return o ('USCORE');
@@ -46,16 +49,12 @@
 
 
 
-["]                    this.begin("string");
-<string>["]            this.popState();
-<string>[^"\n]*        return "STRING";
-<string>[\n]           return "NEWLINE_IN_STRING";
-<string><<EOF>>        return "EOF_IN_STRING";
+["]                   this.begin("string");
+<string>["]           this.popState();
+<string>[^"\n]*       return o ("STRING");
 
 
 /* LITERALS */
 [a-zA-Z][a-zA-Z0-9]*  return o ('IDENT');
 
 \s+                   /* skip whitespace */
-
-<<EOF>>               return o ('EOF');

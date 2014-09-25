@@ -95,7 +95,7 @@
   };
 
   nodes.IntegerNumberLiteral = function (value) {
-    this.CLASS = "IntegerLiteral";
+    this.CLASS = "IntLiteral";
     this.value = parseInt(value);
   };
 

@@ -3,23 +3,27 @@
   var errors = require('./errors.js');
   var util = require('util');
 
-  var Scope = function() {
-  };
+  var Scope = function() { };
 
   Scope.prototype.inspect = function() {
     return util.inspect(this.symbols, {depth: 2});
   };
 
   Scope.prototype.define = function(name, type) {
+    var currentResolvedSymbol = this.silentResolve(name);
+    if (currentResolvedSymbol && currentResolvedSymbol.cannotOverwrite) {
+      throw new errors.SymbolRedeclarationError(name);
+    }
+
     this.symbols[name] = type;
   };
 
   Scope.prototype.defineFunction = function(name, type) {
-    this.symbols[name] = new symbols.ConstantSymbol(name, type); //todo
+    this.define(name, new symbols.FunctionSymbol(name, type));
   };
 
   Scope.prototype.defineConstant = function(name, type) {
-    this.symbols[name] = new symbols.ConstantSymbol(name, type);
+    this.define(name, new symbols.ConstantSymbol(name, type));
   };
 
   Scope.prototype.resolve = function(name) {
@@ -33,6 +37,17 @@
 
     throw new errors.SymbolNotFoundError(name);
   };
+
+  Scope.prototype.silentResolve = function(name) {
+    var searchedSymbol = this.symbols[name];
+
+    if (searchedSymbol)
+      return searchedSymbol;
+
+    if (this.parent)
+      return this.parent.silentResolve(name);
+  };
+
 
   var scopes = {};
 

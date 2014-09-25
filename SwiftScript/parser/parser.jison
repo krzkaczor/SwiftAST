@@ -18,7 +18,7 @@ top-level-block
     ;
 
 block
-    : LCBRAC NL statements RCBRAC stat-end { $$ = new Block($3); }
+    : LCBRAC statements RCBRAC stat-end { $$ = new Block($2); }
     ;
 
 statements
@@ -114,6 +114,7 @@ type-or-name-and-type
 stat-end
     : NL
     | SEM
+    | EOF
     ;
 
 id

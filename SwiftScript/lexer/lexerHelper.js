@@ -8,7 +8,7 @@
       this.matchNL = true;
     }
 
-    if (TOKEN == 'SEM' || TOKEN == 'NL') {
+    if (TOKEN == 'SEM' || TOKEN == 'NL' || TOKEN == 'LCBRAC' ) {
       this.matchNL = false;
     }
 

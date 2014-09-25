@@ -1,8 +1,16 @@
 (function() {
-  var NamedType = function(name, parent) {
+  var NamedType = function(name, parent, concreteType) {
     this.CLASS = "NamedType";
     this.name = name;
     this.parent = parent;
+    this.concreteType = concreteType || this;
+  };
+
+  var TypeRoot = require('./typeRoot.js');
+  NamedType.prototype = new TypeRoot();
+
+  NamedType.prototype.ensureNotLiteral = function() {
+    return this.concreteType;
   };
 
   NamedType.prototype.eq = function(other) {
@@ -21,6 +29,16 @@
     if (this.parent)
       return this.parent.isSubtype(other);
     return false;
+  };
+
+  NamedType.prototype.findCommonType = function (anotherType) {
+    var currentType = this;
+    while (currentType !== undefined) {
+      if (anotherType === currentType || anotherType.isSubtype(currentType))
+        return currentType;
+      else
+        currentType = currentType.parent;
+    }
   };
 
   module.exports = NamedType;

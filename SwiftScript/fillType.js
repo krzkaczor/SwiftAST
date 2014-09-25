@@ -89,7 +89,7 @@
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
     this.parameters.forEach(function(parameter) {
-      self.scope.defineConstant(parameter.name, parameter.fillType(self.scope).type);
+      parameter.fillType(self.scope);
     });
 
     this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}));
@@ -113,7 +113,7 @@
 
   nodes.IntegerNumberLiteral.prototype.fillType = function (scope) {
     this.scope = scope;
-    this.type = scope.resolve("IntegerLiteral");
+    this.type = scope.resolve("IntLiteral");
     return this;
   };
 

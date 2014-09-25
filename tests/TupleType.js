@@ -31,7 +31,7 @@ describe("TupleType", function() {
 
   it('should be covariant', function() {
     var doublesTuple = new typeSystem.types.TupleType([typeSystem.builtInTypes.Double, typeSystem.builtInTypes.Double]);
-    var intLiteralsTuple = new typeSystem.types.TupleType([typeSystem.builtInTypes.IntegerLiteral, typeSystem.builtInTypes.IntegerLiteral]);
+    var intLiteralsTuple = new typeSystem.types.TupleType([typeSystem.builtInTypes.IntLiteral, typeSystem.builtInTypes.IntLiteral]);
     assert.ok(intLiteralsTuple.isSubtype(doublesTuple));
   });
 

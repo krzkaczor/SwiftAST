@@ -32,4 +32,27 @@ describe("Scopes", function() {
     assert.ok(func1Scope.resolve('local').type.eq(typeSystem.builtInTypes.Int));
     assert.throws(function() {globalScope.resolve('local')} , errors.SymbolNotFoundError);
   });
+
+  it('should prevent from redeclaration of const', function() {
+    var input = "let a = 5;";
+    input += "let a = 5.5;";
+
+    assert.throws(function() {swiftScript.astWithTypes(input);} , errors.SymbolRedeclarationError);
+  });
+
+  it('should prevent from redeclaration of function', function() {
+    var input = "func a () { return ; }\n";
+    input += "func a () { return ; }\n";
+
+    assert.throws(function() {swiftScript.astWithTypes(input);} , errors.SymbolRedeclarationError);
+  });
+
+  it('should hide previously declared const', function() {
+    var input = "let a = 5;\n";
+    input += "func fun () {\n" +
+        "let a = 5.5;\n" +
+        "}\n";
+
+    swiftScript.astWithTypes(input);
+  });
 });
