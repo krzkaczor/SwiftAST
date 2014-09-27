@@ -10,7 +10,7 @@
   };
 
   Scope.prototype.define = function(name, type) {
-    var currentResolvedSymbol = this.silentResolve(name);
+    var currentResolvedSymbol = this.silentResolve(name, true);
     if (currentResolvedSymbol && currentResolvedSymbol.cannotOverwrite) {
       throw new errors.SymbolRedeclarationError(name);
     }
@@ -38,13 +38,13 @@
     throw new errors.SymbolNotFoundError(name);
   };
 
-  Scope.prototype.silentResolve = function(name) {
+  Scope.prototype.silentResolve = function(name, onlyCurrentScope) {
     var searchedSymbol = this.symbols[name];
 
     if (searchedSymbol)
       return searchedSymbol;
 
-    if (this.parent)
+    if (this.parent && !onlyCurrentScope)
       return this.parent.silentResolve(name);
   };
 
