@@ -1,6 +1,7 @@
 /lex
 %right ARROW
 %right ASSIGN
+%right DOUBLE_ASSIGN
 %left ASTERIX
 %left DIV
 %left PLUS
@@ -32,6 +33,11 @@ statement
     | expression stat-end
     | return stat-end
     | if-stat
+    | assignment stat-end
+    ;
+
+assignment
+    : id ASSIGN expression   { $$ = new AssignmentStatement($1, $3); }
     ;
 
 if-stat
@@ -49,6 +55,7 @@ for-in-stat
 
 declaration
     : let-declaration
+    | var-declaration
     | function-declaration
     ;
 
@@ -73,6 +80,10 @@ parameter
 
 let-declaration
     : LET pattern ASSIGN expression stat-end  { $$ = new ConstantDeclaration($2, $4) }
+    ;
+
+var-declaration
+    : VAR pattern ASSIGN expression stat-end { $$ = new VariableDeclaration($2, $4) }
     ;
 
 pattern
@@ -167,7 +178,7 @@ expression-binary-operator
     | expression DOT value-expression     { $$ = new MemberAccess($1, $3) }
     | expression RNGICL expression        { $$ = new OperatorCall($2, $1, $3) }
     | expression RNGECL expression        { $$ = new OperatorCall($2, $1, $3) }
-    | expression ASSIGN ASSIGN expression  { $$ = new LogicalOperatorCall("==", $1, $4) }
+    | expression DOUBLE_ASSIGN expression  { $$ = new LogicalOperatorCall("==", $1, $3) }
     ;
 
 function-call

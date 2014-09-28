@@ -29,10 +29,18 @@ var SymbolRedeclarationError = function(name) {
 };
 SymbolRedeclarationError.prototype = new Error();
 
+var ConstantAssignmentError = function(name) {
+  this.CLASS = 'ConstantAssignmentError';
+  this.name = name;
+  this.message = "Trying to assign to constant: " + name;
+};
+ConstantAssignmentError.prototype = new Error();
+
 
 module.exports = {
   TypeNotAccessibleError: TypeNotAccessibleError,
   TypeInconsistencyError: TypeInconsistencyError,
   SymbolNotFoundError: SymbolNotFoundError,
-  SymbolRedeclarationError: SymbolRedeclarationError
+  SymbolRedeclarationError: SymbolRedeclarationError,
+  ConstantAssignmentError: ConstantAssignmentError
 };

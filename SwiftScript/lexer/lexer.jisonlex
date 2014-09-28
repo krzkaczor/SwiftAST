@@ -7,6 +7,7 @@
 <<EOF>>               return o ('EOF');
 $                     return o ('EOF');
 
+"=="                  return o ('DOUBLE_ASSIGN');
 "="                   return o ('ASSIGN');
 
 "_"                   return o ('USCORE');
@@ -27,6 +28,8 @@ $                     return o ('EOF');
 
 /* KEYWORDS */
 "let"                 return o ('LET');
+"var"                 return o ('VAR');
+
 "return"              return o ('RETURN');
 "func"                return o ('FUNC');
 "for"                 return o ('FOR');

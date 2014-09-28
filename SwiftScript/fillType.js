@@ -44,12 +44,12 @@
     var referencedSymbol = scope.resolve(this.id);
 
     if (referencedSymbol.cannotOverwrite) {
-      throw new errors.SymbolRedeclarationError(this.id); //todo: probalby new type of error
+      throw new errors.ConstantAssignmentError(this.id);
     }
 
     var expressionType = this.expression.fillType(scope).type;
     if (!expressionType.eq(referencedSymbol.type) && !expressionType.isSubtype(referencedSymbol.type)) {
-      throw new errors.TypeInconsistencyError(expressionType, referencedSymbol.type)
+      throw new errors.TypeInconsistencyError([expressionType, referencedSymbol.type])
     }
   };
 

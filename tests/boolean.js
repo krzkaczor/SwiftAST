@@ -16,7 +16,7 @@ describe("Boolean", function() {
     var ast = swiftScript.astWithTypes(input);
 
     var bool = ast.scope.resolve("trueBool").type;
-    assert.equal(bool.eq(typeSystem.builtInTypes.Bool), true);
+    assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
   });
 
   it('should recognize false bool literal', function () {
@@ -24,7 +24,7 @@ describe("Boolean", function() {
     var ast = swiftScript.astWithTypes(input);
 
     var bool = ast.scope.resolve("falseBool").type;
-    assert.equal(bool.eq(typeSystem.builtInTypes.Bool), true);
+    assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
   });
 
   it('should basic logical operators work', function () {
@@ -32,6 +32,6 @@ describe("Boolean", function() {
     var ast = swiftScript.astWithTypes(input);
 
     var bool = ast.scope.resolve("falseBool").type;
-    assert.equal(bool.eq(typeSystem.builtInTypes.Bool), true);
+    assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
   });
 });

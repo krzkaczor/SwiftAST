@@ -2,6 +2,7 @@
   var symbols = {};
 
   symbols.VariableSymbol = function (name, type) {
+    this.CLASS = "VariableTypeSymbol";
     this.name = name;
     this.type = type;
   };

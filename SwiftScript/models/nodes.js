@@ -25,6 +25,12 @@
     return this;
   };
 
+  nodes.AssignmentStatement = function(id, expression) {
+    this.CLASS = 'AssigmentStatement';
+    this.id = id.value;
+    this.expression = expression;
+  };
+
   nodes.Block = function (statements) {
     this.CLASS = 'Block';
     this.statements = statements;
@@ -50,6 +56,12 @@
 
   nodes.ConstantDeclaration = function (pattern, expression) {
     this.CLASS = "ConstantDeclaration";
+    this.pattern = pattern;
+    this.expression = expression;
+  };
+
+  nodes.VariableDeclaration = function (pattern, expression) {
+    this.CLASS = "VariableDeclaration";
     this.pattern = pattern;
     this.expression = expression;
   };

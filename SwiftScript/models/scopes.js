@@ -22,6 +22,10 @@
     this.define(name, new symbols.FunctionSymbol(name, type));
   };
 
+  Scope.prototype.defineVariable = function(name, type) {
+    this.define(name, new symbols.VariableSymbol(name, type));
+  };
+
   Scope.prototype.defineConstant = function(name, type) {
     this.define(name, new symbols.ConstantSymbol(name, type));
   };
