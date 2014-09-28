@@ -29,13 +29,22 @@
   };
 
   SwiftScript.prototype.ast = function(input) {
+    input = this.processInput(input);
     return this.parser.parse(input);
   };
 
   SwiftScript.prototype.astWithTypes = function(input) {
+    input = this.processInput(input);
     var astWithTypes = this.ast(input).fillType();
 
     return astWithTypes;
+  };
+  //refactor:
+  //wrap input in some kind of class (with additional data like, input files, settings regarding including runtime etc.)
+  // processInput should be method of that class
+  SwiftScript.prototype.processInput = function(input) {
+    input = input.replace(/\r/g,'');
+    return input;
   };
 
   module.exports = SwiftScript;

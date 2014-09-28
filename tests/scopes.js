@@ -48,8 +48,8 @@ describe("Scopes", function() {
   });
 
   it('should hide previously declared const', function() {
-    var input = "let a = 5;\n";
-    input += "func fun () {\n" +
+    var input = "let a = 5;\n" +
+        "func fun () {\n" +
         "let a = 5.5;\n" +
         "}\n";
 
