@@ -39,17 +39,41 @@
     return this;
   };
 
+  nodes.AssignmentStatement.prototype.fillType = function(scope) {
+    this.scope = scope;
+    var referencedSymbol = scope.resolve(this.id);
+
+    if (referencedSymbol.cannotOverwrite) {
+      throw new errors.SymbolRedeclarationError(this.id); //todo: probalby new type of error
+    }
+
+    var expressionType = this.expression.fillType(scope).type;
+    if (!expressionType.eq(referencedSymbol.type) && !expressionType.isSubtype(referencedSymbol.type)) {
+      throw new errors.TypeInconsistencyError(expressionType, referencedSymbol.type)
+    }
+  };
+
   nodes.ConstantDeclaration.prototype.fillType = function (scope) {
     this.scope = scope;
 
     var expressionType = this.expression.fillType(scope).type;
 
-    this.type = this.pattern.fillType(scope, expressionType).type;
+    this.type = this.pattern.fillType(scope, expressionType, scope.defineConstant.bind(scope)).type;
 
     return this;
   };
 
-  nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType) {
+  nodes.VariableDeclaration.prototype.fillType = function (scope) {
+    this.scope = scope;
+
+    var expressionType = this.expression.fillType(scope).type;
+
+    this.type = this.pattern.fillType(scope, expressionType, scope.defineVariable.bind(scope)).type;
+
+    return this;
+  };
+
+  nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType, definer) {
     if (this.typeBare) {
       var typeDeclared = this.typeBare.fillType(scope).type;
 
@@ -61,16 +85,16 @@
     } else {
       this.type = expressionType.ensureNotLiteral();
     }
-    scope.defineConstant(this.name, this.type);
+    definer(this.name, this.type);
     return this;
   };
 
-  nodes.TuplePattern.prototype.fillType = function(scope, expressionType) {
+  nodes.TuplePattern.prototype.fillType = function(scope, expressionType, definer) {
     if (expressionType.CLASS !== "TupleType" || this.patterns.length != expressionType.expressionsTypes.length)
       throw new errors.TypeInconsistencyError([this.patterns, expressionType.expressionsTypes]);
 
     for(var i = 0;i < this.patterns.length;i++) {
-      this.patterns[i].fillType(scope, expressionType.expressionsTypes[i]);
+      this.patterns[i].fillType(scope, expressionType.expressionsTypes[i], definer);
     }
 
     return this;
