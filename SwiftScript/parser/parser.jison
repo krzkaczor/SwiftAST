@@ -71,7 +71,7 @@ parameters
 
 parameters-list
     : parameter { $$ = [$1] }
-    | parameters COMMA parameter { $$ = $1; $$.push(parameter); }
+    | parameters COMMA parameter { $$ = $1; $$.push($3); }
     ;
 
 parameter

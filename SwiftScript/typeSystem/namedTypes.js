@@ -3,14 +3,18 @@
     this.CLASS = "NamedType";
     this.name = name;
     this.parent = parent;
-    this.concreteType = concreteType || this;
+    this.concreteType = concreteType;
   };
 
   var TypeRoot = require('./typeRoot.js');
   NamedType.prototype = new TypeRoot();
 
+  NamedType.prototype.toString = function() {
+    return this.concreteType? this.concreteType.toString() : this.name;
+  };
+
   NamedType.prototype.ensureNotLiteral = function() {
-    return this.concreteType;
+    return this.concreteType || this;
   };
 
   NamedType.prototype.eq = function(other) {

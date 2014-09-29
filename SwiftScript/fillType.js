@@ -90,8 +90,13 @@
   };
 
   nodes.TuplePattern.prototype.fillType = function(scope, expressionType, definer) {
-    if (expressionType.CLASS !== "TupleType" || this.patterns.length != expressionType.expressionsTypes.length)
+    if (expressionType.CLASS !== "TupleType") {
+      throw new errors.TypeInconsistencyError([typeSystem.builtInTypes.TupleType, expressionType.type]);
+    }
+
+    if(this.patterns.length != expressionType.expressionsTypes.length) {
       throw new errors.TypeInconsistencyError([this.patterns, expressionType.expressionsTypes]);
+    }
 
     for(var i = 0;i < this.patterns.length;i++) {
       this.patterns[i].fillType(scope, expressionType.expressionsTypes[i], definer);

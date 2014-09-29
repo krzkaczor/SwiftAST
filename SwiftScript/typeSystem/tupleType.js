@@ -27,6 +27,12 @@
   var TypeRoot = require('./typeRoot.js');
   TupleType.prototype = new TypeRoot();
 
+  TupleType.prototype.toString = function() {
+    return "({0})".format(this.expressionsTypes.map(function (type) {
+      return type.toString();
+    }).join(", "))
+  };
+
   TupleType.prototype.unpack = function () {
     return this.expressionsTypes[0];
   };

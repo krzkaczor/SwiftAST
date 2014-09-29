@@ -15,7 +15,7 @@
         delete node.scope;
 
       for(var item in node) {
-        if (typeof item !== 'function') {
+        if (item && typeof item === 'object') {
           removeScope(node[item]);
         }
       }

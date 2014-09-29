@@ -8,6 +8,10 @@
   var TypeRoot = require('./typeRoot.js');
   FunctionType.prototype = new TypeRoot();
 
+  FunctionType.prototype.toString = function() {
+    return "Function {0} -> {1}".format(this.paramType, this.returnType);
+  };
+
   FunctionType.prototype.eq = function (other) {
     if (other.canUnpack)
       other = other.unpack();
