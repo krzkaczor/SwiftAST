@@ -1,20 +1,27 @@
 (function() {
+  var matchNL = false;
   var lexerHelper = function(TOKEN) {
-    if (TOKEN == 'NL' && !this.matchNL) {
+    if (TOKEN == 'NL' && !matchNL) {
       return;
     }
 
     if (TOKEN != 'NL') {
-      this.matchNL = true;
+      matchNL = true;
     }
 
     if (TOKEN == 'SEM' || TOKEN == 'NL' || TOKEN == 'LCBRAC' ) {
-      this.matchNL = false;
+      matchNL = false;
+    }
+
+    if (TOKEN == 'DOT') {
+      this.begin("after-dot");
+    } else if (this.conditionStack[this.conditionStack.length - 1] == "after-dot") {
+      this.popState();
     }
 
     return TOKEN;
   };
 
-  lexerHelper.matchNL = false;
+
   module.exports = lexerHelper;
 })();
