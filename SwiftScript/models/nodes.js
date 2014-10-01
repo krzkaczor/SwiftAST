@@ -15,7 +15,7 @@
         delete node.scope;
 
       for(var item in node) {
-        if (item && typeof item === 'object') {
+        if (item && typeof item !== 'function') {
           removeScope(node[item]);
         }
       }
@@ -25,10 +25,10 @@
     return this;
   };
 
-  nodes.AssignmentStatement = function(id, expression) {
+  nodes.AssignmentStatement = function(leftExpression, rightExpression) {
     this.CLASS = 'AssigmentStatement';
-    this.id = id.value;
-    this.expression = expression;
+    this.leftExpression = leftExpression;
+    this.rightExpression = rightExpression;
   };
 
   nodes.Block = function (statements) {

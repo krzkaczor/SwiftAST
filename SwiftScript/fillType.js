@@ -14,6 +14,14 @@
     return this;
   };
 
+  nodes.Id.prototype.fillType = function(scope){
+    this.scope = scope;
+    this.symbol = scope.resolve(this.value);
+    this.type = this.symbol.type;
+
+    return this;
+  }
+
   nodes.Block.prototype.fillType = function (parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
@@ -41,15 +49,20 @@
 
   nodes.AssignmentStatement.prototype.fillType = function(scope) {
     this.scope = scope;
-    var referencedSymbol = scope.resolve(this.id);
+    this.leftExpression.fillType(scope);
+    this.rightExpression.fillType(scope);
 
-    if (referencedSymbol.cannotOverwrite) {
+    if (!this.leftExpression.symbol)
+      throw new errors.SymbolNotFoundError();
+
+    if (this.leftExpression.symbol.cannotOverwrite)
       throw new errors.ConstantAssignmentError(this.id);
-    }
 
-    var expressionType = this.expression.fillType(scope).type;
-    if (!expressionType.eq(referencedSymbol.type) && !expressionType.isSubtype(referencedSymbol.type)) {
-      throw new errors.TypeInconsistencyError([expressionType, referencedSymbol.type])
+
+    var rightExpressionType = this.rightExpression.type,
+        leftExpressionType = this.leftExpression.type;
+    if (!rightExpressionType.eq(leftExpressionType) && !rightExpressionType.isSubtype(leftExpressionType)) {
+      throw new errors.TypeInconsistencyError([rightExpressionType, leftExpressionType])
     }
   };
 
@@ -142,7 +155,9 @@
 
   nodes.IntegerNumberLiteral.prototype.fillType = function (scope) {
     this.scope = scope;
+    this.symbol = scope.silentResolve(this.value);
     this.type = scope.resolve("IntLiteral");
+
     return this;
   };
 
@@ -195,7 +210,8 @@
 
   nodes.Id.prototype.fillType = function (scope) {
     this.scope = scope;
-    this.type = scope.resolve(this.value).type;
+    this.symbol = scope.resolve(this.value);
+    this.type = this.symbol.type;
 
     return this;
   };
@@ -241,7 +257,9 @@
     this.left.fillType(scope);
     this.verifyTypes(scope);
 
-    this.type = this.left.type.access(this.right.value);
+    this.symbol = this.left.type.access(this.right.value);
+    this.type = this.symbol.type;
+
     return this;
   };
 

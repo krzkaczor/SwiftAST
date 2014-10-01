@@ -98,7 +98,34 @@ describe("Tuples", function() {
     var globalScope = ast.scope;
 
     var namedTuple = globalScope.resolve("namedTuple").type;
-    assert.ok(namedTuple.access("x").eq(typeSystem.builtInTypes.Int));
-    assert.ok(namedTuple.access("y").eq(typeSystem.builtInTypes.Double));
+    assert.ok(namedTuple.access("x").type.eq(typeSystem.builtInTypes.Int));
+    assert.ok(namedTuple.access("y").type.eq(typeSystem.builtInTypes.Double));
+  });
+
+  it("should allow to access complex tuple correctly", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    input += "let first = complexTuple.0.0;" +
+      "let second = complexTuple.0.1;" +
+      "let third = complexTuple.1;";
+    var ast = swiftScript.astWithTypes(input);
+    var globalScope = ast.scope;
+
+    assert.ok(globalScope.resolve('first').type.eq(typeSystem.builtInTypes.Int));
+    assert.ok(globalScope.resolve('second').type.eq(typeSystem.builtInTypes.String));
+    assert.ok(globalScope.resolve('third').type.eq(typeSystem.builtInTypes.Double));
+  });
+
+  it("should not allow to overwrite tuple item", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    input += "complexTuple.0.1 = 10;";
+
+    assert.throws(function() { swiftScript.astWithTypes(input); }, errors.ConstantAssignmentError);
+  });
+
+  it("should not allow to destruct other type than tuple", function() {
+    var input = fs.readFileSync(path + "BunchOfTuples.swift", "utf8");
+    input += "complexTuple.1.0;";
+
+    assert.throws(function() { swiftScript.astWithTypes(input); }, errors.TypeNotAccessibleError);
   });
 });

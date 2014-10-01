@@ -33,11 +33,6 @@ statement
     | expression stat-end
     | return stat-end
     | if-stat
-    | assignment stat-end
-    ;
-
-assignment
-    : id ASSIGN expression   { $$ = new AssignmentStatement($1, $3); }
     ;
 
 if-stat
@@ -57,21 +52,41 @@ declaration
     : let-declaration
     | var-declaration
     | function-declaration
+    | class-declaration
+    | initializer-declaration
+    ;
+
+initializer-declaration
+    : INIT parameters block
+    ;
+
+class-declaration
+    : CLASS id class-body
+    ;
+
+class-body
+    : LCBRAC RCBRAC stat-end
+    | LCBRAC declarations RCBRAC stat-end
+    ;
+
+declarations
+    : declaration                     { $$ = [$1]; }
+    | declarations declaration        { $$ = $1; $$.push($2); }
     ;
 
 function-declaration
-    : FUNC id LBRAC parameters RBRAC ARROW type block  { $$ = new FunctionDeclaration($2, $4, $8, $7) }
-    | FUNC id LBRAC parameters RBRAC block             { $$ = new FunctionDeclaration($2, $4, $6) }
+    : FUNC id parameters ARROW type block  { $$ = new FunctionDeclaration($2, $3, $6, $5) }
+    | FUNC id parameters block             { $$ = new FunctionDeclaration($2, $3, $4) }
     ;
 
 parameters
-    : { $$ = [] }
-    | parameters-list
+    : LBRAC RBRAC                   { $$ = []; }
+    | LBRAC parameters-list RBRAC   { $$ = $2; }
     ;
 
 parameters-list
     : parameter { $$ = [$1] }
-    | parameters COMMA parameter { $$ = $1; $$.push($3); }
+    | parameters-list COMMA parameter { $$ = $1; $$.push($3); }
     ;
 
 parameter
@@ -167,18 +182,19 @@ value-expression
 
 parenthesized-expression
     : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) },
-    | LBRAC RBRAC { $$ = new ParenthesizedExpression() },
+    | LBRAC RBRAC                            { $$ = new ParenthesizedExpression() },
     ;
 
 expression-binary-operator
-    : expression ASTERIX expression       { $$ = new OperatorCall($2, $1, $3) }
-    | expression DIV expression         { $$ = new OperatorCall($2, $1, $3) }
-    | expression PLUS expression          { $$ = new OperatorCall($2, $1, $3) }
-    | expression MINUS expression         { $$ = new OperatorCall($2, $1, $3) }
-    | expression DOT value-expression     { $$ = new MemberAccess($1, $3) }
-    | expression RNGICL expression        { $$ = new OperatorCall($2, $1, $3) }
-    | expression RNGECL expression        { $$ = new OperatorCall($2, $1, $3) }
+    : expression ASTERIX expression        { $$ = new OperatorCall($2, $1, $3) }
+    | expression DIV expression            { $$ = new OperatorCall($2, $1, $3) }
+    | expression PLUS expression           { $$ = new OperatorCall($2, $1, $3) }
+    | expression MINUS expression          { $$ = new OperatorCall($2, $1, $3) }
+    | expression DOT expression            { $$ = new MemberAccess($1, $3) }
+    | expression RNGICL expression         { $$ = new OperatorCall($2, $1, $3) }
+    | expression RNGECL expression         { $$ = new OperatorCall($2, $1, $3) }
     | expression DOUBLE_ASSIGN expression  { $$ = new LogicalOperatorCall("==", $1, $3) }
+    | expression ASSIGN expression         { $$ = new AssignmentStatement($1, $3); }
     ;
 
 function-call

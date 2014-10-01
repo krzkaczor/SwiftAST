@@ -38,7 +38,7 @@
   };
 
   TupleType.prototype.access = function (id) {
-    return this.scope.resolve(id).type;
+    return this.scope.resolve(id);
   };
 
   TupleType.prototype.eq = function (other) {
