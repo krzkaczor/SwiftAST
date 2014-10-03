@@ -13,6 +13,12 @@ var SymbolNotFoundError = function(name) {
 };
 SymbolNotFoundError.prototype = new Error();
 
+var InternalError = function(description) {
+  this.CLASS = "InternalError";
+  this.description = description;
+  this.message = "Internal Error: " + description;
+};
+InternalError.prototype = new Error();
 
 var TypeNotAccessibleError = function(type) {
   this.CLASS = "TypeNotAccessibleError";

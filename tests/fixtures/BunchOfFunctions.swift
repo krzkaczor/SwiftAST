@@ -25,3 +25,7 @@ func doNothing () -> () {
 func doNothing2 () {
     return ;
 }
+
+func namedParameters (a first : Int, b second : Int) -> Int {
+    return first + second;
+}

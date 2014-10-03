@@ -25,6 +25,12 @@
     return this;
   };
 
+  nodes.ClassDeclaration = function(name, declarations) {
+    this.CLASS = "ClassDeclaration";
+    this.name = name;
+    this.declarations = declarations;
+  };
+
   nodes.AssignmentStatement = function(leftExpression, rightExpression) {
     this.CLASS = 'AssigmentStatement';
     this.leftExpression = leftExpression;
@@ -83,10 +89,11 @@
     this.returnTypeDeclaredBare = returnType;
   };
 
-  nodes.Parameter = function(name, type){
+  nodes.Parameter = function(name, type, externalName){
     this.CLASS = "Parameter";
     this.name = name.value;
     this.typeDeclared = type;
+    this.externalName = externalName? externalName.value : undefined;
   };
 
   nodes.NamedTypeNode = function(name) {

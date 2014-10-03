@@ -134,7 +134,7 @@
       parameter.fillType(self.scope);
     });
 
-    this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}));
+    this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}), this.parameters.map(function(param) { return param.externalName}));
     if (this.returnTypeDeclaredBare)
       this.returnType = this.returnTypeDeclaredBare.fillType(parentScope).type;
     else {
@@ -249,8 +249,8 @@
     var argsType = this.args.fillType(scope).type,
         paramType = this.functionType.paramType;
 
-    if( !argsType.eq(paramType) && !argsType.isSubtype(paramType))
-      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType])
+    if( !argsType.eq(paramType) && !argsType.isSubtypeWithExactIds(paramType))
+      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType]) //todo: approprat error for error when didn't used named parameteres
   };
 
   nodes.MemberAccess.prototype.fillType = function(scope) {

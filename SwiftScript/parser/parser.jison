@@ -57,16 +57,16 @@ declaration
     ;
 
 initializer-declaration
-    : INIT parameters block
+    : INIT parameters block         { $$ = FunctionDeclaration(); }
     ;
 
 class-declaration
-    : CLASS id class-body
+    : CLASS id class-body                       { $$ = new ClassDeclaration($2, $3); }
     ;
 
 class-body
-    : LCBRAC RCBRAC stat-end
-    | LCBRAC declarations RCBRAC stat-end
+    : LCBRAC RCBRAC stat-end                    { $$ = []; }
+    | LCBRAC declarations RCBRAC stat-end       { $$ = $2; }
     ;
 
 declarations
@@ -90,7 +90,8 @@ parameters-list
     ;
 
 parameter
-    : id type-annotation  { $$ = new Parameter($1, $2) }
+    : id type-annotation    { $$ = new Parameter($1, $2) }
+    | id id type-annotation { $$ = new Parameter($2, $3, $1) }
     ;
 
 let-declaration

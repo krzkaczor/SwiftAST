@@ -1,15 +1,16 @@
 (function() {
   var scopes = require("../models/scopes.js");
+  var errors = require("../models/errors.js");
 
   var TupleType = function (expressionsTypes, ids) {
     this.CLASS = "TupleType";
     this.expressionsTypes = expressionsTypes === undefined ? [] : expressionsTypes;
     this.canUnpack = this.expressionsTypes.length == 1;
     this.accessible = true;
-    this.ids = ids === undefined ? [] : ids;
+    this.ids = ids === undefined? [] : ids;
 
     if(this.ids[0] && typeof this.ids[0] === 'object') {
-      throw new Error("dupa");
+      throw new errors.InternalError("id should be string");
     }
 
     this.scope = new scopes.RootScope();
@@ -91,6 +92,28 @@
         return false;
     }
     return true;
+  };
+
+  TupleType.prototype.isSubtypeWithExactIds = function(other) {
+    //isSubtype is less strict comparison so if it fails we don't have to check further
+    if (!this.isSubtype(other)) {
+      return false;
+    }
+
+    if (other.CLASS != this.CLASS) {
+      return !this.ids[0];
+    }
+
+    if (this.ids.length != other.ids.length) {
+      return false;
+    }
+
+    for(var i = 0; i < this.ids.length; i++) {
+      if (this.ids[i] != other.ids[i])
+        return false;
+    }
+
+    return true
   };
 
   TupleType.prototype.ensureNotLiteral = function () {

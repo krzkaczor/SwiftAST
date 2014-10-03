@@ -66,4 +66,10 @@ describe("Functions", function() {
     assert.equal(doNothing.returnType.eq(new typeSystem.types.TupleType()), true);
   });
 
+  it('should enforce using named parameters when declared', function() {
+    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    input += 'namedParameters(a: 5, 10);';
+
+    assert.throws(function() { swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+  });
 });
