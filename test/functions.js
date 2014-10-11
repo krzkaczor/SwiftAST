@@ -1,6 +1,6 @@
 var assert = require("assert");
 var fs = require("fs");
-var path = 'tests/fixtures/';
+var path = 'test/fixtures/';
 var errors = require("../SwiftScript/models/errors.js");
 var SwiftScript = require("../SwiftScript/swiftScript.js");
 var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
