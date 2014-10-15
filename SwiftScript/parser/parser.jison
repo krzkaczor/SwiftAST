@@ -57,7 +57,7 @@ declaration
     ;
 
 initializer-declaration
-    : INIT parameters block         { $$ = FunctionDeclaration(); }
+    : INIT parameters block         { $$ = new FunctionDeclaration($1,$2, $3); }
     ;
 
 class-declaration
@@ -75,8 +75,8 @@ declarations
     ;
 
 function-declaration
-    : FUNC id parameters ARROW type block  { $$ = new FunctionDeclaration($2, $3, $6, $5) }
-    | FUNC id parameters block             { $$ = new FunctionDeclaration($2, $3, $4) }
+    : FUNC id parameters ARROW type block  { $$ = new FunctionDeclaration($2.value, $3, $6, $5) }
+    | FUNC id parameters block             { $$ = new FunctionDeclaration($2.value, $3, $4) }
     ;
 
 parameters

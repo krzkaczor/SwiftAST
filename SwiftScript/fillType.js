@@ -140,6 +140,11 @@
     else {
       this.returnType = new typeSystem.types.TupleType([]);
     }
+
+    if (this.name == 'init') {
+      this.paramsTypes.ids = this.parameters.map(function(param) { return param.name });
+    }
+
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
     this.block.fillType(this.scope);
 

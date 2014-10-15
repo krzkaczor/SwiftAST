@@ -83,11 +83,15 @@
 
   nodes.FunctionDeclaration = function(name, parameters, block, returnType) {
     this.CLASS = "FunctionDeclaration";
-    this.name = name.value;
+    this.name = name;
     this.parameters = parameters;
     this.block = block;
     this.returnTypeDeclaredBare = returnType;
   };
+
+  nodes.InitializerDeclaration = function(parameters, block, returnType) {
+   ;
+  }
 
   nodes.Parameter = function(name, type, externalName){
     this.CLASS = "Parameter";
