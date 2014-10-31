@@ -1,1 +1,5 @@
-let dupa: Int = x;
+class Foo {
+    init() {
+        return 5;
+    }
+}
