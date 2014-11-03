@@ -3,18 +3,18 @@ var fs = require("fs");
 var path = 'test/fixtures/';
 var errors = require("../SwiftAst/analyzer/errors.js");
 var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
-var SwiftScript = require("../SwiftAst/SwiftAst.js");
+var SwiftAst = require("../SwiftAst/SwiftAst.js");
 var path = require('path');
 
 describe("Scopes", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function() {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should resolve different variables in different scopes', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "MultipleScopes.swift"), "utf8");
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var globalScope = ast.scope;
     var func1Scope = ast.statements[0].block.scope;
@@ -25,7 +25,7 @@ describe("Scopes", function() {
 
   it('should built scopes correctly', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "MultipleScopes.swift"), "utf8");
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var globalScope = ast.scope;
     var func1Scope = ast.statements[0].block.scope;
@@ -39,6 +39,6 @@ describe("Scopes", function() {
     var input = "func a () { return ; }\n";
     input += "func a () { return ; }\n";
 
-    assert.throws(function() {swiftScript.ast(input);} , errors.SymbolRedeclarationError);
+    assert.throws(function() {swiftAst.ast(input);} , errors.SymbolRedeclarationError);
   });
 });

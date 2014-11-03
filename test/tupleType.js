@@ -3,12 +3,12 @@ var fs = require("fs");
 var path = 'test/fixtures/';
 var errors = require("../SwiftAst/analyzer/errors.js");
 var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
-var SwiftScript = require("../SwiftAst/SwiftAst.js");
+var SwiftAst = require("../SwiftAst/SwiftAst.js");
 
 describe("TupleType", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function() {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should be equal to simpler type when consists only of one element', function() {

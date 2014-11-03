@@ -4,6 +4,7 @@
   "description": "",
   "repository": "https://github.com/krzKaczor/SwiftAST.git",
   "main": "gruntfile.js",
+  "app": "SwiftAst/SwiftAst",
   "directories": {
     "test": "tests"
   },

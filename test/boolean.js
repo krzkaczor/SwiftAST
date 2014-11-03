@@ -6,14 +6,14 @@ var errors = require("../SwiftAst/analyzer/errors");
 var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem");
 
 describe("Boolean", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function () {
-    swiftScript = new SwiftAst();
+    swiftAst = new SwiftAst();
   });
 
   it('should recognize true bool literal', function () {
     var input = "let trueBool = true;";
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("trueBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -21,7 +21,7 @@ describe("Boolean", function() {
 
   it('should recognize false bool literal', function () {
     var input = "let falseBool = false;";
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -29,7 +29,7 @@ describe("Boolean", function() {
 
   it('should basic logical operators work', function () {
     var input = "let falseBool = 5 == 5;";
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));

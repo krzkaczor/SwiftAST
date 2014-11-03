@@ -3,18 +3,18 @@ var fs = require("fs");
 var path = 'test/fixtures/';
 var errors = require("../SwiftAst/analyzer/errors.js");
 var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
-var SwiftScript = require("../SwiftAst/SwiftAst.js");
+var SwiftAst = require("../SwiftAst/SwiftAst.js");
 var path = require('path');
 
 describe("String", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function () {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should recognise string', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfStrings.swift"), "utf8");
-    var ast = swiftScript.ast(input);
+    var ast = swiftAst.ast(input);
 
     var scope = ast.scope;
     var string1 = scope.resolve("string1");
