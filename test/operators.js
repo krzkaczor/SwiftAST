@@ -1,5 +1,5 @@
 var assert = require("assert");
-var SwiftAst = require("../SwiftAst/SwiftAst.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
 
 describe("Operators", function() {
   var swiftAst;

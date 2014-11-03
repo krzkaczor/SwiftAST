@@ -1,8 +1,8 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var errors = require("../SwiftAst/analyzer/errors.js");
-var SwiftAst = require("../SwiftAst/SwiftAst.js");
+var errors = require("../SwiftAST/analyzer/errors.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
 var path = require('path');
 
 describe("TypeFill", function() {

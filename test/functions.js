@@ -1,8 +1,8 @@
 var assert = require("assert");
 var fs = require("fs");
-var errors = require("../SwiftAst/analyzer/errors.js");
-var SwiftAst = require("../SwiftAst/SwiftAst.js");
-var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
+var errors = require("../SwiftAST/analyzer/errors.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
+var typeSystem = require("../SwiftAST/analyzer/typeSystem/typeSystem.js");
 var path = require('path');
 
 describe("Functions", function() {
