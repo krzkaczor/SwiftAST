@@ -1,7 +1,7 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var SwiftAst = require("../SwiftAst/SwiftAst");
+var SwiftAst = require("../SwiftAst/SwiftAst.js");
 var errors = require("../SwiftAst/analyzer/errors");
 var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem");
 
