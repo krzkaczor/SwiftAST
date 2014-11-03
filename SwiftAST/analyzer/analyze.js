@@ -1,20 +1,20 @@
 (function () {
-  var nodes = require("./models/nodes.js");
-  var scopes = require("./models/scopes.js");
+  var nodes = require("./../builder/nodes.js");
+  var scopes = require("./scopes.js");
   var typeSystem = require("./typeSystem/typeSystem.js");
-  var errors = require("./models/errors.js");
+  var errors = require("./errors.js");
 
-  nodes.TopLevelBlock.prototype.fillType = function () {
+  nodes.TopLevelBlock.prototype.analyze = function () {
     var self = this;
     this.scope = new scopes.RootScope(typeSystem.builtInTypes);
 
     this.statements.forEach(function (statement) {
-      statement.fillType(self.scope);
+      statement.analyze(self.scope);
     });
     return this;
   };
 
-  nodes.Id.prototype.fillType = function(scope){
+  nodes.Id.prototype.analyze = function(scope){
     this.scope = scope;
     this.symbol = scope.resolve(this.value);
     this.type = this.symbol.type;
@@ -22,35 +22,35 @@
     return this;
   }
 
-  nodes.Block.prototype.fillType = function (parentScope) {
+  nodes.Block.prototype.analyze = function (parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
 
     this.statements.forEach(function (statement) {
-      statement.fillType(self.scope);
+      statement.analyze(self.scope);
     });
     return this;
   };
 
-  nodes.IfStatement.prototype.fillType = function(scope) {
-    this.condition.fillType(scope);
-    this.block.fillType(scope);
+  nodes.IfStatement.prototype.analyze = function(scope) {
+    this.condition.analyze(scope);
+    this.block.analyze(scope);
 
     return this;
   };
 
-  nodes.ReturnStatement.prototype.fillType = function(scope) {
+  nodes.ReturnStatement.prototype.analyze = function(scope) {
     this.scope = scope;
     if (this.expression)
-      this.type = this.expression.fillType(scope).type;
+      this.type = this.expression.analyze(scope).type;
 
     return this;
   };
 
-  nodes.AssignmentStatement.prototype.fillType = function(scope) {
+  nodes.AssignmentStatement.prototype.analyze = function(scope) {
     this.scope = scope;
-    this.leftExpression.fillType(scope);
-    this.rightExpression.fillType(scope);
+    this.leftExpression.analyze(scope);
+    this.rightExpression.analyze(scope);
 
     if (!this.leftExpression.symbol)
       throw new errors.SymbolNotFoundError();
@@ -66,29 +66,29 @@
     }
   };
 
-  nodes.ConstantDeclaration.prototype.fillType = function (scope) {
+  nodes.ConstantDeclaration.prototype.analyze = function (scope) {
     this.scope = scope;
 
-    var expressionType = this.expression.fillType(scope).type;
+    var expressionType = this.expression.analyze(scope).type;
 
-    this.type = this.pattern.fillType(scope, expressionType, scope.defineConstant.bind(scope)).type;
+    this.type = this.pattern.analyze(scope, expressionType, scope.defineConstant.bind(scope)).type;
 
     return this;
   };
 
-  nodes.VariableDeclaration.prototype.fillType = function (scope) {
+  nodes.VariableDeclaration.prototype.analyze = function (scope) {
     this.scope = scope;
 
-    var expressionType = this.expression.fillType(scope).type;
+    var expressionType = this.expression.analyze(scope).type;
 
-    this.type = this.pattern.fillType(scope, expressionType, scope.defineVariable.bind(scope)).type;
+    this.type = this.pattern.analyze(scope, expressionType, scope.defineVariable.bind(scope)).type;
 
     return this;
   };
 
-  nodes.IdentifierPattern.prototype.fillType = function(scope, expressionType, definer) {
+  nodes.IdentifierPattern.prototype.analyze = function(scope, expressionType, definer) {
     if (this.typeBare) {
-      var typeDeclared = this.typeBare.fillType(scope).type;
+      var typeDeclared = this.typeBare.analyze(scope).type;
 
       if (!typeDeclared.eq(expressionType) && !expressionType.isSubtype(typeDeclared)) {
         throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
@@ -102,7 +102,7 @@
     return this;
   };
 
-  nodes.TuplePattern.prototype.fillType = function(scope, expressionType, definer) {
+  nodes.TuplePattern.prototype.analyze = function(scope, expressionType, definer) {
     if (expressionType.CLASS !== "TupleType") {
       throw new errors.TypeInconsistencyError([typeSystem.builtInTypes.TupleType, expressionType.type]);
     }
@@ -112,48 +112,48 @@
     }
 
     for(var i = 0;i < this.patterns.length;i++) {
-      this.patterns[i].fillType(scope, expressionType.expressionsTypes[i], definer);
+      this.patterns[i].analyze(scope, expressionType.expressionsTypes[i], definer);
     }
 
     return this;
   };
 
-  nodes.ParenthesizedExpression.prototype.fillType = function(scope) {
+  nodes.ParenthesizedExpression.prototype.analyze = function(scope) {
     this.expressionsTypes = this.expressions.map(function(expr) {
-      return expr.fillType(scope).type;
+      return expr.analyze(scope).type;
     });
 
     this.type = new typeSystem.types.TupleType(this.expressionsTypes, this.ids);
     return this;
   };
 
-  nodes.FunctionDeclaration.prototype.fillType = function(parentScope) {
+  nodes.FunctionDeclaration.prototype.analyze = function(parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
     this.parameters.forEach(function(parameter) {
-      parameter.fillType(self.scope);
+      parameter.analyze(self.scope);
     });
 
     this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}), this.parameters.map(function(param) { return param.externalName}));
     if (this.returnTypeDeclaredBare)
-      this.returnType = this.returnTypeDeclaredBare.fillType(parentScope).type;
+      this.returnType = this.returnTypeDeclaredBare.analyze(parentScope).type;
     else {
       this.returnType = new typeSystem.types.TupleType([]);
     }
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
-    this.block.fillType(this.scope);
+    this.block.analyze(this.scope);
 
     return this;
   };
 
-  nodes.Parameter.prototype.fillType = function(scope) {
+  nodes.Parameter.prototype.analyze = function(scope) {
     this.scope = scope;
-    this.type = this.typeDeclared.fillType(scope).type;
+    this.type = this.typeDeclared.analyze(scope).type;
     this.scope.defineConstant(this.name, this.type);
     return this;
   };
 
-  nodes.IntegerNumberLiteral.prototype.fillType = function (scope) {
+  nodes.IntegerNumberLiteral.prototype.analyze = function (scope) {
     this.scope = scope;
     this.symbol = scope.silentResolve(this.value);
     this.type = scope.resolve("IntLiteral");
@@ -161,32 +161,32 @@
     return this;
   };
 
-  nodes.StringLiteral.prototype.fillType = function (scope) {
+  nodes.StringLiteral.prototype.analyze = function (scope) {
     this.scope = scope;
     this.type = scope.resolve("StringLiteral");
     return this;
   };
 
-  nodes.BoolLiteral.prototype.fillType = function (scope) {
+  nodes.BoolLiteral.prototype.analyze = function (scope) {
     this.scope = scope;
     this.type = scope.resolve("BoolLiteral");
     return this;
   };
 
-  nodes.NamedTypeNode.prototype.fillType = function(scope) {
+  nodes.NamedTypeNode.prototype.analyze = function(scope) {
     this.type = scope.resolve(this.name);
     return this;
   };
 
-  nodes.FunctionTypeNode.prototype.fillType = function(scope) {
-    this.type = new typeSystem.types.FunctionType(this.paramType.fillType(scope).type, this.returnType.fillType(scope).type);
+  nodes.FunctionTypeNode.prototype.analyze = function(scope) {
+    this.type = new typeSystem.types.FunctionType(this.paramType.analyze(scope).type, this.returnType.analyze(scope).type);
 
     return this;
   };
 
-  nodes.TupleTypeNode.prototype.fillType = function(scope){
+  nodes.TupleTypeNode.prototype.analyze = function(scope){
     this.types = this.typesBare.map(function(type) {
-      return type.fillType(scope).type;
+      return type.analyze(scope).type;
     });
 
     var ids = this.typesBare.map(function(type) {
@@ -202,13 +202,13 @@
     return this;
   };
 
-  nodes.DoubleNumberLiteral.prototype.fillType = function (scope) {
+  nodes.DoubleNumberLiteral.prototype.analyze = function (scope) {
     this.scope = scope;
     this.type = scope.resolve("DoubleLiteral"); //could be done while creation of object
     return this;
   };
 
-  nodes.Id.prototype.fillType = function (scope) {
+  nodes.Id.prototype.analyze = function (scope) {
     this.scope = scope;
     this.symbol = scope.resolve(this.value);
     this.type = this.symbol.type;
@@ -216,29 +216,29 @@
     return this;
   };
 
-  nodes.ArrayExpression.prototype.fillType = function (scope) {
+  nodes.ArrayExpression.prototype.analyze = function (scope) {
     this.scope = scope;
     var array = scope.resolve("Array");
     var itemsTypes = this.items.map(function (item) {
-          return item.fillType(scope)
+          return item.analyze(scope)
         }
     );
     this.type = new typeSystem.types.CompoundTypeSymbol(array, itemsTypes[0]);
     return this;
   };
 
-  nodes.ForInLoop.prototype.fillType = function (scope) {
+  nodes.ForInLoop.prototype.analyze = function (scope) {
     this.scope = new scopes.LocalScope(scope);
-    this.scope.define(this.iteratorId.value, this.iteratorExpr.fillType(this.scope));
-    this.block.fillType(this.scope);
+    this.scope.define(this.iteratorId.value, this.iteratorExpr.analyze(this.scope));
+    this.block.analyze(this.scope);
     return this;
   };
 
-  nodes.FunctionCall.prototype.fillType = function (scope) {
+  nodes.FunctionCall.prototype.analyze = function (scope) {
     this.scope = scope;
     this.functionType = this.scope.resolve(this.callee).type;
     this.type = this.functionType.returnType;
-    this.args.fillType(scope);
+    this.args.analyze(scope);
 
     this.verifyTypes(scope);
 
@@ -246,15 +246,15 @@
   };
 
   nodes.FunctionCall.prototype.verifyTypes = function(scope) {
-    var argsType = this.args.fillType(scope).type,
+    var argsType = this.args.analyze(scope).type,
         paramType = this.functionType.paramType;
 
     if( !argsType.eq(paramType) && !argsType.isSubtypeWithExactIds(paramType))
       throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType]) //todo: approprat error for error when didn't used named parameteres
   };
 
-  nodes.MemberAccess.prototype.fillType = function(scope) {
-    this.left.fillType(scope);
+  nodes.MemberAccess.prototype.analyze = function(scope) {
+    this.left.analyze(scope);
     this.verifyTypes(scope);
 
     this.symbol = this.left.type.access(this.right.value);
@@ -268,19 +268,19 @@
       throw new errors.TypeNotAccessibleError(this);
   };
 
-  nodes.OperatorCall.prototype.fillType = function (scope) {
+  nodes.OperatorCall.prototype.analyze = function (scope) {
     this.scope = scope;
-    this.left.fillType(scope);
-    this.right.fillType(scope);
+    this.left.analyze(scope);
+    this.right.analyze(scope);
 
     this.type = this.left.type.findCommonType(this.right.type) || this.left.type.ensureNotLiteral().findCommonType(this.right.type.ensureNotLiteral());
     return this;
   };
 
-  nodes.LogicalOperatorCall.prototype.fillType = function (scope) {
+  nodes.LogicalOperatorCall.prototype.analyze = function (scope) {
     this.scope = scope;
-    this.left.fillType(scope);
-    this.right.fillType(scope);
+    this.left.analyze(scope);
+    this.right.analyze(scope);
 
     this.type = typeSystem.builtInTypes.Bool; //@todo
     return this;

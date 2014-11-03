@@ -1,6 +1,6 @@
 (function() {
-  var scopes = require("../models/scopes.js");
-  var errors = require("../models/errors.js");
+  var errors = require("../errors.js");
+  var scopes = require("../scopes.js");
 
   var TupleType = function (expressionsTypes, ids) {
     this.CLASS = "TupleType";

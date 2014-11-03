@@ -1,2 +1,1 @@
-func a () { return ; }
-func a () { return ; }
+let x = 5;

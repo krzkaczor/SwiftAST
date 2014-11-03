@@ -1,9 +1,9 @@
 var assert = require("assert");
 var fs = require("fs");
-var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
+var errors = require("../SwiftAst/analyzer/errors.js");
+var SwiftScript = require("../SwiftAst/SwiftAst.js");
+var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
+var path = require('path');
 
 describe("Functions", function() {
   var swiftScript;
@@ -12,8 +12,8 @@ describe("Functions", function() {
   });
 
   it('should fill types of int function correctly', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
-    var ast = swiftScript.astWithTypes(input);
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', 'BunchOfFunctions.swift'), "utf8");
+    var ast = swiftScript.ast(input);
 
     var returningIntFunctionSignature = ast.scope.resolve("returningIntFunction").type;
     assert.equal(returningIntFunctionSignature.paramType.expressionsTypes[0].name, "Int");
@@ -21,8 +21,8 @@ describe("Functions", function() {
   });
 
   it('should fill types of double function correctly', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
-    var ast = swiftScript.astWithTypes(input);
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
+    var ast = swiftScript.ast(input);
 
     var returningIntFunctionSignature = ast.scope.resolve("returningDoubleFunction").type;
     assert.equal(returningIntFunctionSignature.paramType.expressionsTypes[0].name, "Double");
@@ -30,14 +30,14 @@ describe("Functions", function() {
   });
 
   it('should raise exception when arguments do not match function signature', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
     input += "returningIntFunction(5.0);";
-    assert.throws( function() { return swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+    assert.throws( function() { return swiftScript.ast(input); }, errors.TypeInconsistencyError);
   });
 
   it('should allow function as first class citizens', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
-    var ast = swiftScript.astWithTypes(input);
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
+    var ast = swiftScript.ast(input);
 
     var scope = ast.scope;
     var applyZero = scope.resolve("applyZero").type;
@@ -46,9 +46,9 @@ describe("Functions", function() {
   });
 
   it('should allow function without parameters', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
     input += "let funcThatTakesOneArg: () -> Int = returnFive;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftScript.ast(input);
 
     var scope = ast.scope;
     var returnFive = scope.resolve("returnFive").type;
@@ -56,8 +56,8 @@ describe("Functions", function() {
   });
 
   it('should allow function without parameters', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
-    var ast = swiftScript.astWithTypes(input);
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
+    var ast = swiftScript.ast(input);
 
     var scope = ast.scope;
     var doNothing = scope.resolve("doNothing").type;
@@ -67,9 +67,9 @@ describe("Functions", function() {
   });
 
   it('should enforce using named parameters when declared', function() {
-    var input = fs.readFileSync(path + "BunchOfFunctions.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfFunctions.swift"), "utf8");
     input += 'namedParameters(a: 5, 10);';
 
-    assert.throws(function() { swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+    assert.throws(function() { swiftScript.ast(input); }, errors.TypeInconsistencyError);
   });
 });

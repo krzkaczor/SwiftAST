@@ -1,17 +1,18 @@
 {
-  "name": "jison_playground",
-  "version": "0.0.0",
+  "name": "SwiftAST",
+  "version": "0.1.0",
   "description": "",
+  "repository": "https://github.com/krzKaczor/SwiftAST.git",
   "main": "gruntfile.js",
   "directories": {
     "test": "tests"
   },
   "dependencies": {
-    "jison": "^0.4.13",
-    "requirejs": "^2.1.14"
+    "jison": "=0.4.15",
+    "requirejs": "=2.1.15"
   },
   "devDependencies": {
-    "mocha": "^1.21.4"
+    "mocha": "=1.21.5"
   },
   "scripts": {
     "test": "mocha"

@@ -1,9 +1,9 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
+var errors = require("../SwiftAst/analyzer/errors");
+var SwiftScript = require("../SwiftAst/SwiftAst.js");
+var typeSystem = require("../SwiftAst/analyzer/typeSystem/typeSystem.js");
 
 describe("ConstantDeclaration", function() {
   var swiftScript;
@@ -13,7 +13,7 @@ describe("ConstantDeclaration", function() {
 
   it('should declare constant', function () {
     var input = "let a = 5;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftScript.ast(input);
 
     assert.equal(ast.scope.resolve("a").CLASS, "ConstantTypeSymbol");
     assert.equal(ast.scope.resolve("a").type, typeSystem.builtInTypes.Int);
@@ -23,7 +23,7 @@ describe("ConstantDeclaration", function() {
     var input = "let a = 5;";
     input += "let a = 5.5;";
 
-    assert.throws(function() {swiftScript.astWithTypes(input);} , errors.SymbolRedeclarationError);
+    assert.throws(function() {swiftScript.ast(input);} , errors.SymbolRedeclarationError);
   });
 
   it('should hide previously declared const', function() {
@@ -32,13 +32,13 @@ describe("ConstantDeclaration", function() {
       "let a = 5.5;\n" +
       "}\n";
 
-    swiftScript.astWithTypes(input);
+    swiftScript.ast(input);
   });
 
   it('should not allow assigning to const', function() {
     var input = "let a = 5;";
     input += "a = 6;";
 
-    assert.throws(function() {swiftScript.astWithTypes(input);} , errors.ConstantAssignmentError);
+    assert.throws(function() {swiftScript.ast(input);} , errors.ConstantAssignmentError);
   });
 });
