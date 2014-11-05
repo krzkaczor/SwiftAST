@@ -1,34 +1,35 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
+var errors = require("../SwiftAST/analyzer/errors.js");
+var typeSystem = require("../SwiftAST/analyzer/typeSystem/typeSystem.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
+var path = require('path');
 
 describe("Tuple inheritance model", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function() {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should correctly recognize named tuple type', function() {
-    var input = fs.readFileSync(path + "TuplesInheritance.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "TuplesInheritance.swift"), "utf8");
     input += "getPoint((x: 5, y: 6));";
 
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
   });
 
   it('should treat named tuple as subtype of tuple', function() {
-    var input = fs.readFileSync(path + "TuplesInheritance.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "TuplesInheritance.swift"), "utf8");
     input += "getPoint((5, 6));";
 
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
   });
 
   it('should not allow to pass tuple with different names', function() {
-    var input = fs.readFileSync(path + "TuplesInheritance.swift", "utf8");
+    var input = fs.readFileSync(path.join(__dirname, 'fixtures', "TuplesInheritance.swift"), "utf8");
     input += "getPoint(a: 5, 6);";
 
-    assert.throws( function() { return swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+    assert.throws( function() { return swiftAst.ast(input); }, errors.TypeInconsistencyError);
   });
 });

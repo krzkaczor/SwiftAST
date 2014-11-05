@@ -1,5 +1,5 @@
 (function() {
-  var symbols = require('../typeSystem/symbols.js');
+  var symbols = require('./typeSystem/symbols.js');
   var errors = require('./errors.js');
   var util = require('util');
 

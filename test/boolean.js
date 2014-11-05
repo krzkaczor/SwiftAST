@@ -1,19 +1,18 @@
 var assert = require("assert");
 var fs = require("fs");
-var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
+var SwiftAst = require("../SwiftAST/SwiftAst");
+var errors = require("../SwiftAST/analyzer/errors");
+var typeSystem = require("../SwiftAST/analyzer/typeSystem/typeSystem");
 
 describe("Boolean", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function () {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should recognize true bool literal', function () {
     var input = "let trueBool = true;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("trueBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -21,7 +20,7 @@ describe("Boolean", function() {
 
   it('should recognize false bool literal', function () {
     var input = "let falseBool = false;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -29,7 +28,7 @@ describe("Boolean", function() {
 
   it('should basic logical operators work', function () {
     var input = "let falseBool = 5 == 5;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));

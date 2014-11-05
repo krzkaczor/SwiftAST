@@ -1,19 +1,19 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
+var errors = require("../SwiftAST/analyzer/errors.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
+var typeSystem = require("../SwiftAST/analyzer/typeSystem/typeSystem.js");
 
 describe("VariableDeclaration", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function () {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should declare variable', function () {
     var input = "var a = 5;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
 
     assert.equal(ast.scope.resolve("a").CLASS, "VariableTypeSymbol");
     assert.equal(ast.scope.resolve("a").type, typeSystem.builtInTypes.Int);
@@ -22,7 +22,7 @@ describe("VariableDeclaration", function() {
   it('should allow to redeclare variable', function () {
     var input = "var a = 5;" +
       "a = 10;";
-    var ast = swiftScript.astWithTypes(input);
+    var ast = swiftAst.ast(input);
 
     assert.equal(ast.scope.resolve("a").CLASS, "VariableTypeSymbol");
     assert.equal(ast.scope.resolve("a").type, typeSystem.builtInTypes.Int);
@@ -32,6 +32,6 @@ describe("VariableDeclaration", function() {
     var input = "var a = 5;" +
       "a = \"abc\";";
 
-    assert.throws( function() { return swiftScript.astWithTypes(input); }, errors.TypeInconsistencyError);
+    assert.throws( function() { return swiftAst.ast(input); }, errors.TypeInconsistencyError);
   });
 });

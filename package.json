@@ -8,18 +8,14 @@
   },
   "dependencies": {
     "jison": "^0.4.13",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt": "^0.4.5",
-    "grunt-contrib-coffee": "^0.11.1",
     "requirejs": "^2.1.14"
   },
   "devDependencies": {
-    "mocha": "^1.21.4",
-    "coffee-script": "^1.8.0"
+    "mocha": "^1.21.4"
   },
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Krzysztof Kaczor",
+  "license": "MIT"
 }

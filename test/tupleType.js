@@ -1,14 +1,14 @@
 var assert = require("assert");
 var fs = require("fs");
 var path = 'test/fixtures/';
-var errors = require("../SwiftScript/models/errors.js");
-var typeSystem = require("../SwiftScript/typeSystem/typeSystem.js");
-var SwiftScript = require("../SwiftScript/swiftScript.js");
+var errors = require("../SwiftAST/analyzer/errors.js");
+var typeSystem = require("../SwiftAST/analyzer/typeSystem/typeSystem.js");
+var SwiftAst = require("../SwiftAST/SwiftAst.js");
 
 describe("TupleType", function() {
-  var swiftScript;
+  var swiftAst;
   beforeEach(function() {
-    swiftScript = new SwiftScript();
+    swiftAst = new SwiftAst();
   });
 
   it('should be equal to simpler type when consists only of one element', function() {
