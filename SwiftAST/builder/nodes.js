@@ -89,9 +89,12 @@
     this.returnTypeDeclaredBare = returnType;
   };
 
-  nodes.InitializerDeclaration = function(parameters, block, returnType) {
-   ;
-  }
+  nodes.InitializerDeclaration = function(parameters, block) {
+    this.CLASS = "InitializerDeclaration";
+    this.name = "init";
+    this.parameters = parameters;
+    this.block = block;
+  };
 
   nodes.Parameter = function(name, type, externalName){
     this.CLASS = "Parameter";

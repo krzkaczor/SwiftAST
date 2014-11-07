@@ -1,0 +1,13 @@
+
+collecting types should be divided to 2 phases - first is discovery symbols and second is validating types etc.
+
+class ComplexNumber {
+
+    init (real: Double, imaginary: Double) {
+        self.real = real;
+        self.imaginary = imaginary;
+    }
+
+    var real: Double = 0;
+    var imaginary: Double = 0;
+}

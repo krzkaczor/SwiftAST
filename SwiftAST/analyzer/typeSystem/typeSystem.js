@@ -2,7 +2,8 @@
   var types = {
     NamedType: require("./namedTypes.js"),
     FunctionType: require("./functionType.js"),
-    TupleType: require("./tupleType.js")
+    TupleType: require("./tupleType.js"),
+    ClassType: require("./classType.js")
   };
 
   var builtInTypes = {

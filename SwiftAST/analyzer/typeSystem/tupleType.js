@@ -121,8 +121,8 @@
     return true
   };
 
-  TupleType.prototype.createNamedTuple = function() {
-
+  TupleType.prototype.createNamedTuple = function(ids) {
+    return new TupleType(this.expressionsTypes, ids);
   };
 
   TupleType.prototype.ensureNotLiteral = function () {

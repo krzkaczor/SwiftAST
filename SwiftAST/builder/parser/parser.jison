@@ -57,11 +57,11 @@ declaration
     ;
 
 initializer-declaration
-    : INIT parameters block         { $$ = new FunctionDeclaration($1,$2, $3); }
+    : INIT parameters block         { $$ = new InitializerDeclaration($2, $3); }
     ;
 
 class-declaration
-    : CLASS id class-body                       { $$ = new ClassDeclaration($2, $3); }
+    : CLASS id class-body                       { $$ = new ClassDeclaration($2.value, $3); }
     ;
 
 class-body
