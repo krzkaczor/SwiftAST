@@ -78,5 +78,13 @@
     }
   };
 
+  scopes.WrapScope = function(scopeToWrap) {
+    this.wrapped = scopeToWrap;
+  };
+
+  scopes.WrapScope.prototype.resolve = function(name) {
+    return this.wrapped.resolve(name);
+  };
+
   module.exports = scopes;
 })();

@@ -1,3 +1,4 @@
+'use strict';
 (function () {
   var nodes = require("./../builder/nodes.js");
   var scopes = require("./scopes.js");
@@ -20,8 +21,7 @@
     this.type = this.symbol.type;
 
     return this;
-  }
-
+  };
   nodes.Block.prototype.analyze = function (parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
@@ -127,6 +127,56 @@
     return this;
   };
 
+  nodes.ClassDeclaration.prototype.analyze = function(parentScope) {
+    this.scope = new scopes.LocalScope(parentScope);
+    this.type = new typeSystem.types.ClassType(this.name, this.scope);
+    this.scope.defineConstant('self', this.type);
+
+    var self = this;
+    this.declarations.forEach(function(declaration) {
+      declaration.analyze(self.scope);
+    });
+
+    this.findInits();
+
+    parentScope.defineFunction(this.name, this.inits[0].type);
+  };
+
+  nodes.ClassDeclaration.prototype.findInits = function() {
+    var inits = [];
+    this.inits = inits;
+    this.declarations.forEach(function(declaration) {
+      if (declaration.name === 'init') {
+        inits.push(declaration);
+      }
+    });
+
+    //always make sure that there is at least one init
+    if (!this.inits.length) {
+      this.inits.push(new nodes.InitializerDeclaration());
+    }
+  };
+
+  nodes.InitializerDeclaration.prototype.analyze = function(parentScope) {
+    var self = this;
+    this.scope = new scopes.LocalScope(parentScope);
+    this.parameters.forEach(function(parameter) {
+      parameter.analyze(self.scope);
+    });
+
+    this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}), this.parameters.map(function(param) { return param.externalName}));
+    var ids = this.parameters.map(function(param) { return param.name });
+    this.paramsTypes = this.paramsTypes.createNamedTuple(ids);
+
+    this.returnType = parentScope.resolve('self').type;
+
+    this.type = new typeSystem.types.FunctionType(this.paramsTypes, this.returnType);
+    parentScope.defineFunction(this.name, this.type);
+    this.block.analyze(this.scope);
+
+    return this;
+  }
+
   nodes.FunctionDeclaration.prototype.analyze = function(parentScope) {
     var self = this;
     this.scope = new scopes.LocalScope(parentScope);
@@ -140,6 +190,7 @@
     else {
       this.returnType = new typeSystem.types.TupleType([]);
     }
+
     parentScope.defineFunction(this.name, new typeSystem.types.FunctionType(this.paramsTypes, this.returnType));
     this.block.analyze(this.scope);
 
@@ -250,7 +301,7 @@
         paramType = this.functionType.paramType;
 
     if( !argsType.eq(paramType) && !argsType.isSubtypeWithExactIds(paramType))
-      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType]) //todo: approprat error for error when didn't used named parameteres
+      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType]) //todo: appropriate error type for situation when didn't used named parameteres
   };
 
   nodes.MemberAccess.prototype.analyze = function(scope) {

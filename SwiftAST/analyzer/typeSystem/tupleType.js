@@ -29,8 +29,13 @@
   TupleType.prototype = new TypeRoot();
 
   TupleType.prototype.toString = function() {
-    return "({0})".format(this.expressionsTypes.map(function (type) {
-      return type.toString();
+    var self = this;
+    return "({0})".format(this.expressionsTypes.map(function (type, i) {
+      if (self.ids[i]) {
+        return "{0} : {1}".format(self.ids[i], type.toString());
+      } else {
+        return type.toString();
+      }
     }).join(", "))
   };
 
@@ -114,6 +119,10 @@
     }
 
     return true
+  };
+
+  TupleType.prototype.createNamedTuple = function(ids) {
+    return new TupleType(this.expressionsTypes, ids);
   };
 
   TupleType.prototype.ensureNotLiteral = function () {

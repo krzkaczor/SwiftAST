@@ -1,6 +1,7 @@
 var util = require('util');
 var fs = require("fs");
 
+var input = fs.readFileSync('./input.swift', {encoding: 'utf8'});
 console.log("INPUT:");
 console.log(input);
 
