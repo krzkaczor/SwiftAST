@@ -287,8 +287,8 @@
 
   nodes.FunctionCall.prototype.analyze = function (scope) {
     this.scope = scope;
-    this.functionType = this.scope.resolve(this.callee).type;
-    this.type = this.functionType.returnType;
+    this.callee.analyze(scope);
+    this.type = this.callee.type.returnType;
     this.args.analyze(scope);
 
     this.verifyTypes(scope);
@@ -297,11 +297,11 @@
   };
 
   nodes.FunctionCall.prototype.verifyTypes = function(scope) {
-    var argsType = this.args.analyze(scope).type,
-        paramType = this.functionType.paramType;
+    var argsType = this.args.type,
+        paramType = this.callee.type.paramType;
 
     if( !argsType.eq(paramType) && !argsType.isSubtypeWithExactIds(paramType))
-      throw new errors.TypeInconsistencyError([this.args.type, this.functionType.paramType]) //todo: appropriate error type for situation when didn't used named parameteres
+      throw new errors.TypeInconsistencyError([argsType, paramType]) //todo: appropriate error type for situation when didn't used named parameteres
   };
 
   nodes.MemberAccess.prototype.analyze = function(scope) {

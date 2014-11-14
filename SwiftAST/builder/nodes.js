@@ -98,15 +98,15 @@
 
   nodes.Parameter = function(name, type, externalName){
     this.CLASS = "Parameter";
-    this.name = name.value;
+    this.name = name;
     this.typeDeclared = type;
     this.externalName = externalName? externalName.value : undefined;
   };
 
   nodes.NamedTypeNode = function(name) {
     this.CLASS = "NamedTypeNode";
-    this.name = name.value;
-    this.id; // set directly by parser
+    this.name = name;
+    this.id; // @todo set directly by parser
   };
 
   nodes.FunctionTypeNode = function(paramType, returnType) {
@@ -165,7 +165,7 @@
 
   nodes.FunctionCall = function (callee, parenthesizedExpressions) {
     this.CLASS = "FunctionCall";
-    this.callee = callee.value;
+    this.callee = callee;
     this.args = parenthesizedExpressions;
   };
 

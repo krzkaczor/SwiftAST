@@ -99,6 +99,8 @@
     return true;
   };
 
+  //used in function argument verification
+  // - named tuples has to have exact types
   TupleType.prototype.isSubtypeWithExactIds = function(other) {
     //isSubtype is less strict comparison so if it fails we don't have to check further
     if (!this.isSubtype(other)) {

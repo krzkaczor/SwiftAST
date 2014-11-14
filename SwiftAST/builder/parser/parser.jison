@@ -61,7 +61,7 @@ initializer-declaration
     ;
 
 class-declaration
-    : CLASS id class-body                       { $$ = new ClassDeclaration($2.value, $3); }
+    : CLASS IDENT class-body                       { $$ = new ClassDeclaration($2, $3); }
     ;
 
 class-body
@@ -75,8 +75,8 @@ declarations
     ;
 
 function-declaration
-    : FUNC id parameters ARROW type block  { $$ = new FunctionDeclaration($2.value, $3, $6, $5) }
-    | FUNC id parameters block             { $$ = new FunctionDeclaration($2.value, $3, $4) }
+    : FUNC IDENT parameters ARROW type block  { $$ = new FunctionDeclaration($2, $3, $6, $5) }
+    | FUNC IDENT parameters block             { $$ = new FunctionDeclaration($2, $3, $4) }
     ;
 
 parameters
@@ -90,8 +90,8 @@ parameters-list
     ;
 
 parameter
-    : id type-annotation    { $$ = new Parameter($1, $2) }
-    | id id type-annotation { $$ = new Parameter($2, $3, $1) }
+    : IDENT type-annotation    { $$ = new Parameter($1, $2) }
+    | IDENT IDENT type-annotation { $$ = new Parameter($2, $3, $1) }
     ;
 
 let-declaration
@@ -122,7 +122,7 @@ type-annotation
     ;
 
 type
-    : id                                 { $$ = new NamedTypeNode($1) }
+    : IDENT                              { $$ = new NamedTypeNode($1) }
     | type ARROW type                    { $$ = new FunctionTypeNode($1, $3) }
     | LBRAC comma-separated-type RBRAC   { $$ = new TupleTypeNode($2) }
     ;
@@ -134,7 +134,7 @@ comma-separated-type
     ;
 
 type-or-name-and-type
-    : id COL type                              { $$ = $3; $$.id = $1.value }
+    : IDENT COL type                              { $$ = $3; $$.id = $1 }
     | type                                     { $$ = $1; }
     ;
 
@@ -209,5 +209,5 @@ comma-separated-expression
 
  expression-or-expression-with-id
     : expression
-    | id COL expression { $$ = $3; $$.id = $1.value }
+    | IDENT COL expression { $$ = $3; $$.id = $1 }
     ;
