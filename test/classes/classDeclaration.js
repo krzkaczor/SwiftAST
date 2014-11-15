@@ -13,9 +13,9 @@ describe("ClassDeclaration", function() {
 
   //it('should ', function() {
   //  var input = fs.readFileSync(path.join(__dirname, 'fixtures', 'BunchOfFunctions.swift'), "utf8");
-  //  var ast = swiftAst.ast(input);
+  //  var buildAstAndAnalyze = swiftAst.buildAstAndAnalyze(input);
   //
-  //  var returningIntFunctionSignature = ast.scope.resolve("returningIntFunction").type;
+  //  var returningIntFunctionSignature = buildAstAndAnalyze.scope.resolve("returningIntFunction").type;
   //  assert.equal(returningIntFunctionSignature.paramType.expressionsTypes[0].name, "Int");
   //  assert.equal(returningIntFunctionSignature.returnType.name, "Int");
   //});

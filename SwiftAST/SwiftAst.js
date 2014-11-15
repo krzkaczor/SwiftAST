@@ -36,8 +36,12 @@
     };
   };
 
-  SwiftAst.prototype.ast = function(input) {
+  SwiftAst.prototype.buildAstAndAnalyze = function(input) {
     return this.parser.parse(this.processInput(input)).analyze();
+  };
+
+  SwiftAst.prototype.buildAst = function(input) {
+    return this.parser.parse(this.processInput(input));
   };
 
   //make input platform independence

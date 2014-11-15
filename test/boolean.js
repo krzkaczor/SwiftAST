@@ -12,7 +12,7 @@ describe("Boolean", function() {
 
   it('should recognize true bool literal', function () {
     var input = "let trueBool = true;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var bool = ast.scope.resolve("trueBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -20,7 +20,7 @@ describe("Boolean", function() {
 
   it('should recognize false bool literal', function () {
     var input = "let falseBool = false;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));
@@ -28,7 +28,7 @@ describe("Boolean", function() {
 
   it('should basic logical operators work', function () {
     var input = "let falseBool = 5 == 5;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var bool = ast.scope.resolve("falseBool").type;
     assert.ok(bool.eq(typeSystem.builtInTypes.Bool));

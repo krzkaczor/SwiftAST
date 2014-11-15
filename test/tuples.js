@@ -14,7 +14,7 @@ describe("Tuples", function() {
 
   it('should fill type of tuple', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var tupleType = ast.statements[0].type;
     assert.equal(tupleType.expressionsTypes[0].name, "Int");
@@ -23,7 +23,7 @@ describe("Tuples", function() {
 
   it('should deconstruct tuple', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var scope = ast.statements[1].scope;
     assert.equal(scope.resolve("intConst").type.name, "Int");
@@ -32,7 +32,7 @@ describe("Tuples", function() {
 
   it('should deconstruct complex tuple', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var scope = ast.statements[2].scope;
     assert.equal(scope.resolve("a").type.name, "Int");
@@ -43,12 +43,12 @@ describe("Tuples", function() {
   it('should raise exception when deconstructing not tuple', function() {
     var input = "let (a, b) = 5.0;";
 
-    assert.throws( function() { return swiftAst.ast(input); }, errors.TypeInconsistencyError);
+    assert.throws( function() { return swiftAst.buildAstAndAnalyze(input); }, errors.TypeInconsistencyError);
   });
 
   it("should work with type annotation", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     var intAndInt = globalScope.resolve("intAndInt");
@@ -59,7 +59,7 @@ describe("Tuples", function() {
 
   it("should treat single-element-tuple as named type", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     var intAndInt = globalScope.resolve("singleTuple");
@@ -68,7 +68,7 @@ describe("Tuples", function() {
 
   it("should treat single-element-tuple explicit typed as named type", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     var intAndInt = globalScope.resolve("singleTupleExplicitTyped");
@@ -77,7 +77,7 @@ describe("Tuples", function() {
 
   it("should be covariant", function() {
     var input = "let doubleTuple: (Double, Double) = (5, 5);";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     var anotherType = new typeSystem.types.TupleType([typeSystem.builtInTypes.Double, typeSystem.builtInTypes.Double]);
@@ -86,7 +86,7 @@ describe("Tuples", function() {
 
   it("should allow access a member", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     assert.ok(globalScope.resolve("intConst2").type.eq(typeSystem.builtInTypes.Int));
@@ -95,7 +95,7 @@ describe("Tuples", function() {
 
   it("should allow access a member by id", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     var namedTuple = globalScope.resolve("namedTuple").type;
@@ -108,7 +108,7 @@ describe("Tuples", function() {
     input += "let first = complexTuple.0.0;" +
       "let second = complexTuple.0.1;" +
       "let third = complexTuple.1;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     var globalScope = ast.scope;
 
     assert.ok(globalScope.resolve('first').type.eq(typeSystem.builtInTypes.Int));
@@ -120,13 +120,13 @@ describe("Tuples", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
     input += "complexTuple.0.1 = 10;";
 
-    assert.throws(function() { swiftAst.ast(input); }, errors.ConstantAssignmentError);
+    assert.throws(function() { swiftAst.buildAstAndAnalyze(input); }, errors.ConstantAssignmentError);
   });
 
   it("should not allow to destruct other type than tuple", function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfTuples.swift"), "utf8");
     input += "complexTuple.1.0;";
 
-    assert.throws(function() { swiftAst.ast(input); }, errors.TypeNotAccessibleError);
+    assert.throws(function() { swiftAst.buildAstAndAnalyze(input); }, errors.TypeNotAccessibleError);
   });
 });

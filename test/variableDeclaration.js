@@ -13,7 +13,7 @@ describe("VariableDeclaration", function() {
 
   it('should declare variable', function () {
     var input = "var a = 5;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     assert.equal(ast.scope.resolve("a").CLASS, "VariableTypeSymbol");
     assert.equal(ast.scope.resolve("a").type, typeSystem.builtInTypes.Int);
@@ -22,7 +22,7 @@ describe("VariableDeclaration", function() {
   it('should allow to redeclare variable', function () {
     var input = "var a = 5;" +
       "a = 10;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     assert.equal(ast.scope.resolve("a").CLASS, "VariableTypeSymbol");
     assert.equal(ast.scope.resolve("a").type, typeSystem.builtInTypes.Int);
@@ -32,6 +32,6 @@ describe("VariableDeclaration", function() {
     var input = "var a = 5;" +
       "a = \"abc\";";
 
-    assert.throws( function() { return swiftAst.ast(input); }, errors.TypeInconsistencyError);
+    assert.throws( function() { return swiftAst.buildAstAndAnalyze(input); }, errors.TypeInconsistencyError);
   });
 });

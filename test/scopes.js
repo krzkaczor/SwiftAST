@@ -14,7 +14,7 @@ describe("Scopes", function() {
 
   it('should resolve different variables in different scopes', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "MultipleScopes.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var globalScope = ast.scope;
     var func1Scope = ast.statements[0].block.scope;
@@ -25,7 +25,7 @@ describe("Scopes", function() {
 
   it('should built scopes correctly', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "MultipleScopes.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var globalScope = ast.scope;
     var func1Scope = ast.statements[0].block.scope;
@@ -39,6 +39,6 @@ describe("Scopes", function() {
     var input = "func a () { return ; }\n";
     input += "func a () { return ; }\n";
 
-    assert.throws(function() {swiftAst.ast(input);} , errors.SymbolRedeclarationError);
+    assert.throws(function() {swiftAst.buildAstAndAnalyze(input);} , errors.SymbolRedeclarationError);
   });
 });

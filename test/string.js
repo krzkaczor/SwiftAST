@@ -14,7 +14,7 @@ describe("String", function() {
 
   it('should recognise string', function() {
     var input = fs.readFileSync(path.join(__dirname, 'fixtures', "BunchOfStrings.swift"), "utf8");
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
 
     var scope = ast.scope;
     var string1 = scope.resolve("string1");

@@ -10,7 +10,7 @@ describe("Operators", function() {
   //CHECK IT
   it('should associate correctly', function() {
     var input = "let a = 1 + 2 + 3;";
-    var ast = swiftAst.ast(input);
+    var ast = swiftAst.buildAstAndAnalyze(input);
     assert.equal(ast.statements[0].type.name, "Int");
     assert.equal(ast.statements[0].expression.left.left.value, 1);
     assert.equal(ast.statements[0].expression.left.right.value, 2);
@@ -19,8 +19,8 @@ describe("Operators", function() {
 
 //  it('should work with precedence', function() {
 //    var input = fs.readFileSync(path + "BunchOfDoubleDeclarations.swift", "utf8");
-//    var ast = swiftAst.ast(input);
-//    assert.equal(ast.statements[4].type.name, "Double");
+//    var buildAstAndAnalyze = swiftAst.buildAstAndAnalyze(input);
+//    assert.equal(buildAstAndAnalyze.statements[4].type.name, "Double");
 //  });
 
 });

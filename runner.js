@@ -7,7 +7,7 @@ console.log(input);
 
 var SwiftAst = require("./SwiftAst/SwiftAst.js");
 var swiftAst = new SwiftAst();
-var ast = swiftAst.ast(input);
+var ast = swiftAst.buildAstAndAnalyze(input);
 
 if (ast) {
   console.log("AST:");
