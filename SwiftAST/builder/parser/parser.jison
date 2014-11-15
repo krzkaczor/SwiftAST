@@ -22,6 +22,10 @@ block
     : LCBRAC statements RCBRAC stat-end { $$ = new Block($2); }
     ;
 
+parentheses-less-block
+    : statements { $$ = new Block($1); }
+    ;
+
 statements
     : statements statement { $$ = $1; $$.push($2); }
     | statement { $$ = [$1]; }
@@ -77,6 +81,11 @@ declarations
 function-declaration
     : FUNC IDENT parameters ARROW type block  { $$ = new FunctionDeclaration($2, $3, $6, $5) }
     | FUNC IDENT parameters block             { $$ = new FunctionDeclaration($2, $3, $4) }
+    ;
+
+closure-expression
+    : LCBRAC parameters ARROW type IN parentheses-less-block RCBRAC { $$ = new ClosureExpression($2, $6, $4) }
+    | LCRBAC parameters block IN parentheses-less-block RCBRAC      { $$ = new ClosureExpression($2, $4) }
     ;
 
 parameters
@@ -168,6 +177,7 @@ boolean
 expression
     : value-expression
     | expression-binary-operator
+    | closure-expression
     | array
     | function-call
     | parenthesized-expression
@@ -180,6 +190,7 @@ value-expression
     | string
     | boolean
     ;
+
 
 parenthesized-expression
     : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) },

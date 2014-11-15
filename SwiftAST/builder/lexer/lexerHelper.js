@@ -9,7 +9,7 @@
       matchNL = true;
     }
 
-    if (TOKEN == 'SEM' || TOKEN == 'NL' || TOKEN == 'LCBRAC' ) {
+    if (TOKEN == 'SEM' || TOKEN == 'NL' || TOKEN == 'LCBRAC' || TOKEN == 'IN' ) {
       matchNL = false;
     }
 

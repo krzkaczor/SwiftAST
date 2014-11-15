@@ -1,13 +1,13 @@
 SwiftAST
 ===========
-[![Build Status](https://magnum.travis-ci.com/krzKaczor/SwiftAST.svg?token=BbKpsEui6wEsUpubmDsD&branch=master)](https://magnum.travis-ci.com/krzKaczor/SwiftAST)
+[![Build Status](https://travis-ci.org/krzKaczor/SwiftAST.svg)](https://travis-ci.org/krzKaczor/SwiftAST)
 
-Swift AST builder and type analyzer written in JavaScript.
+SwiftAST is [Abstract Syntax Tree](http://en.wikipedia.org/wiki/Abstract_syntax_tree) builder and type analyzer of Swift language written in JavaScript.
 
 This is experimental project under heavy development.
 
 ### Feature list 
-`@todo` For now browse tests to see what it can do.
+For now browse tests to see what it can do.
 
 ### Sample output
 Here is sample AST for fibonacci's sequence swift implementation:

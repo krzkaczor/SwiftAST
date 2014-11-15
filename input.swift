@@ -1,11 +1,5 @@
-class ComplexNumber {
-    var real: Double = 0;
-    var imaginary: Double = 0;
-    
-    init (real: Double, imaginary: Double) {
-        self.real = real;
-        self.imaginary = imaginary;
-    }
+let transform2:(Int, Int) -> Int = {
+    (e: Int, b: Int) -> Int in
+    return 5
 }
 
-var imaginaryUnit = ComplexNumber(real:0, imaginary:1);

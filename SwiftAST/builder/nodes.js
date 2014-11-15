@@ -115,6 +115,13 @@
     this.returnType = returnType;
   };
 
+  nodes.ClosureExpression = function(parameters, block, returnType) {
+    this.CLASS = "ClosureExpression";
+    this.parameters = parameters;
+    this.block = block;
+    this.returnTypeDeclaredBare = returnType;
+  };
+
   nodes.TupleTypeNode = function(typesBare) {
     this.CLASS = "TupleTypeNode";
     this.typesBare = typesBare;

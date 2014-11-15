@@ -197,6 +197,27 @@
     return this;
   };
 
+  nodes.ClosureExpression.prototype.analyze = function(parentScope){
+    var self = this;
+    this.scope = new scopes.LocalScope(parentScope);
+    this.parameters.forEach(function(parameter) {
+      parameter.analyze(self.scope);
+    });
+
+    this.paramsTypes = new typeSystem.types.TupleType(this.parameters.map(function(param) { return param.type}), this.parameters.map(function(param) { return param.externalName}));
+    if (this.returnTypeDeclaredBare)
+      this.returnType = this.returnTypeDeclaredBare.analyze(parentScope).type;
+    else {
+      this.returnType = new typeSystem.types.TupleType([]);
+    }
+
+    this.block.analyze(this.scope);
+
+    this.type = new typeSystem.types.FunctionType(this.paramsTypes, this.returnType);
+
+    return this;
+  };
+
   nodes.Parameter.prototype.analyze = function(scope) {
     this.scope = scope;
     this.type = this.typeDeclared.analyze(scope).type;
