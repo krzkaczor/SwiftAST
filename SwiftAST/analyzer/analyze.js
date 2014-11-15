@@ -318,6 +318,9 @@
   };
 
   nodes.FunctionCall.prototype.verifyTypes = function(scope) {
+    if (this.callee.symbol.type.CLASS == "ExternalType") {
+      return true;
+    }
     var argsType = this.args.type,
         paramType = this.callee.type.paramType;
 
