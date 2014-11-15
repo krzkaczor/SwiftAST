@@ -172,6 +172,7 @@
 
   nodes.FunctionCall = function (callee, parenthesizedExpressions) {
     this.CLASS = "FunctionCall";
+    this.value = callee.value;
     this.callee = callee;
     this.args = parenthesizedExpressions;
   };
