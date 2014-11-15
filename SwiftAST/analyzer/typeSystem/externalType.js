@@ -7,7 +7,7 @@
   ExternalType.prototype = new TypeRoot();
 
   ExternalType.prototype.toString = function() {
-    return "EXTERNAL"''
+    return "EXTERNAL";
   };
 
   ExternalType.prototype.eq = function (other) {
