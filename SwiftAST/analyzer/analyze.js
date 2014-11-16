@@ -55,8 +55,9 @@
     if (!this.leftExpression.symbol)
       throw new errors.SymbolNotFoundError();
 
-    if (this.leftExpression.symbol.cannotOverwrite)
+    if (this.leftExpression.symbol.cannotOverwrite && this.leftExpression.symbol.initialized) {
       throw new errors.ConstantAssignmentError(this.id);
+    }
 
 
     var rightExpressionType = this.rightExpression.type,
@@ -69,7 +70,8 @@
   nodes.ConstantDeclaration.prototype.analyze = function (scope) {
     this.scope = scope;
 
-    var expressionType = this.expression.analyze(scope).type;
+    if (this.expression)
+      var expressionType = this.expression.analyze(scope).type;
 
     this.type = this.pattern.analyze(scope, expressionType, scope.defineConstant.bind(scope)).type;
 
@@ -79,7 +81,8 @@
   nodes.VariableDeclaration.prototype.analyze = function (scope) {
     this.scope = scope;
 
-    var expressionType = this.expression.analyze(scope).type;
+    if (this.expression)
+      var expressionType = this.expression.analyze(scope).type;
 
     this.type = this.pattern.analyze(scope, expressionType, scope.defineVariable.bind(scope)).type;
 
@@ -90,7 +93,7 @@
     if (this.typeBare) {
       var typeDeclared = this.typeBare.analyze(scope).type;
 
-      if (!typeDeclared.eq(expressionType) && !expressionType.isSubtype(typeDeclared)) {
+      if (expressionType && !typeDeclared.eq(expressionType) && !expressionType.isSubtype(typeDeclared)) {
         throw new errors.TypeInconsistencyError([typeDeclared, expressionType]);
       }
 
@@ -98,7 +101,8 @@
     } else {
       this.type = expressionType.ensureNotLiteral();
     }
-    definer(this.name, this.type);
+    var symbol = definer(this.name, this.type, !expressionType); //last argument is true if it wasn't initialized
+
     return this;
   };
 
@@ -131,8 +135,10 @@
     this.scope = new scopes.LocalScope(parentScope);
     this.type = new typeSystem.types.ClassType(this.name, this.scope);
     this.scope.defineConstant('self', this.type);
+    this.scope.defineConstant(this.name, this.type);
 
     var self = this;
+
     this.declarations.forEach(function(declaration) {
       declaration.analyze(self.scope);
     });
@@ -225,6 +231,20 @@
     return this;
   };
 
+  nodes.ArrayLiteral.prototype.analyze = function(scope) {
+    if (!this.elements) {
+      this.type = new typeSystem.types.TypeRoot();
+      return this;
+    }
+    this.type = new typeSystem.types.ArrayType(this.elements.map(function (e) {
+        return e.analyze(scope).type;
+      }).reduce(function (prev, current) {
+        return prev.findCommonType(current);
+      }));
+
+    return this;
+  };
+
   nodes.IntegerNumberLiteral.prototype.analyze = function (scope) {
     this.scope = scope;
     this.symbol = scope.silentResolve(this.value);
@@ -270,6 +290,14 @@
     } else {
       this.type = new typeSystem.types.TupleType(this.types, ids);
     }
+
+    return this;
+  };
+
+  nodes.ArrayTypeNode.prototype.analyze = function(scope) {
+    this.scope = scope;
+    this.subtype = this.typeBare.analyze(scope).type;
+    this.type = new typeSystem.types.ArrayType(this.subtype);
 
     return this;
   };
@@ -328,12 +356,15 @@
       throw new errors.TypeInconsistencyError([argsType, paramType]) //todo: appropriate error type for situation when didn't used named parameteres
   };
 
+  //@todo tuples have wrong scoping
   nodes.MemberAccess.prototype.analyze = function(scope) {
     this.left.analyze(scope);
+    //this.right.analyze(scope);
+    //this.scope = this.right.scope;
     this.verifyTypes(scope);
 
     this.symbol = this.left.type.access(this.right.value);
-    this.type = this.symbol.type;
+      this.type = this.symbol.type;
 
     return this;
   };

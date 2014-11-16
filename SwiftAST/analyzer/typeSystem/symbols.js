@@ -7,10 +7,11 @@
     this.type = type;
   };
 
-  symbols.ConstantSymbol = function (name, type) {
+  symbols.ConstantSymbol = function (name, type, notInitialized) {
     this.CLASS = "ConstantTypeSymbol";
     this.name = name;
     this.type = type;
+    this.initialized = !notInitialized;
 
     this.cannotOverwrite = true;
   };

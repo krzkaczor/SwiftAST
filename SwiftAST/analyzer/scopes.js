@@ -19,15 +19,21 @@
   };
 
   Scope.prototype.defineFunction = function(name, type) {
-    this.define(name, new symbols.FunctionSymbol(name, type));
+    var symbol = new symbols.FunctionSymbol(name, type)
+    this.define(name, symbol);
+    return symbol;
   };
 
   Scope.prototype.defineVariable = function(name, type) {
-    this.define(name, new symbols.VariableSymbol(name, type));
+    var symbol = new symbols.VariableSymbol(name, type);
+    this.define(name, symbol);
+    return symbol;
   };
 
-  Scope.prototype.defineConstant = function(name, type) {
-    this.define(name, new symbols.ConstantSymbol(name, type));
+  Scope.prototype.defineConstant = function(name, type, notInitialized) {
+    var symbol = new symbols.ConstantSymbol(name, type, notInitialized);
+    this.define(name, symbol);
+    return symbol;
   };
 
   Scope.prototype.resolve = function(name) {

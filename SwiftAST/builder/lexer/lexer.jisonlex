@@ -11,6 +11,7 @@ $                     return o ('EOF');
 "=="                  return o ('DOUBLE_ASSIGN');
 "="                   return o ('ASSIGN');
 
+"..<"                 return o ('RNGECL');
 "_"                   return o ('USCORE');
 "->"                  return o ('ARROW');
 "."                   return o ('DOT');
@@ -25,7 +26,6 @@ $                     return o ('EOF');
 "+"                   return o ('PLUS');
 "-"                   return o ('MINUS');
 "..."                 return o ('RNGICL');
-"..<"                 return o ('RNGECL');
 
 /* KEYWORDS */
 "let"                 return o ('LET');

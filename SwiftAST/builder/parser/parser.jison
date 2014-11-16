@@ -105,6 +105,7 @@ parameter
 
 let-declaration
     : LET pattern ASSIGN expression stat-end  { $$ = new ConstantDeclaration($2, $4) }
+    | LET pattern stat-end  { $$ = new ConstantDeclaration($2) }
     ;
 
 var-declaration
@@ -134,6 +135,7 @@ type
     : IDENT                              { $$ = new NamedTypeNode($1) }
     | type ARROW type                    { $$ = new FunctionTypeNode($1, $3) }
     | LBRAC comma-separated-type RBRAC   { $$ = new TupleTypeNode($2) }
+    | LSBRAC type RSBRAC                 { $$ = new ArrayTypeNode($2) }
     ;
 
 comma-separated-type
@@ -181,6 +183,8 @@ expression
     | array
     | function-call
     | parenthesized-expression
+    | array-expression
+    | array-access-expression
     ;
 
 value-expression
@@ -191,6 +195,15 @@ value-expression
     | boolean
     ;
 
+array-expression
+    : LSBRAC RSBRAC                                     { $$ = new ArrayLiteral(); }
+    | LSBRAC comma-separated-expression RSBRAC          { $$ = new ArrayLiteral($2); }
+    ;
+
+array-access-expression
+    : id LSBRAC IntegerLiteral RSBRAC
+    | id LSBRAC id RSBRAC
+    ;
 
 parenthesized-expression
     : LBRAC comma-separated-expression RBRAC { $$ = new ParenthesizedExpression($2) },

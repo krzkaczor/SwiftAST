@@ -127,6 +127,16 @@
     this.typesBare = typesBare;
   };
 
+  nodes.ArrayTypeNode = function(typeBare) {
+    this.CLASS = "ArrayTypeNode";
+    this.typeBare = typeBare;
+  };
+
+  nodes.ArrayLiteral = function(elements) {
+    this.CLASS = "ArrayLiteral";
+    this.elements = elements;
+  }
+
   nodes.IntegerNumberLiteral = function (value) {
     this.CLASS = "IntLiteral";
     this.value = parseInt(value);

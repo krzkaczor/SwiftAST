@@ -51,6 +51,9 @@
     if (this.expressionsTypes.length == 1)
       return other.eq(this.expressionsTypes[0]);
 
+    if (other == undefined)
+      return true; //@todo: tempolary fix for forward reference problem
+
     if (this.CLASS != other.CLASS || this.expressionsTypes.length != other.expressionsTypes.length)
       return false;
 
